@@ -1,4 +1,5 @@
 import numpy as np
+import os.path
 
 
 class DataReader:
@@ -13,15 +14,24 @@ class DataReader:
             A tuple containing the start and end times (in seconds) for range
             over which the ECG data will be calculated
         """
-        self.csv_file_path = csv_file_path
+        try:
+            self.validate_csv_file(csv_file_path)
+            self.csv_file_path = csv_file_path
 
-        if duration is None:
-            self.duration = (0, 10)
-        else:
-            self.duration = duration
+            if duration is None:
+                self.duration = (0, 10)
+            else:
+                self.duration = duration
 
-        self.output_dict = {}
-        self.read_csv_file()
+            self.output_dict = {}
+            self.read_csv_file()
+
+        except FileNotFoundError:
+            print("The input file cannot be found. Please try again.")
+
+        except ValueError:
+            print("The input file does not have a .csv file extension. "
+                  "Please try again with a CSV file.")
 
     def read_csv_file(self):
         """read_csv_file reads in the CSV file from the csv_file_path
@@ -38,3 +48,21 @@ class DataReader:
 
         self.output_dict["time"] = time
         self.output_dict["voltage"] = voltage
+
+    def validate_csv_file(self, csv_file_path):
+        """Checks to make sure that the csv file exists and has a CSV file
+        extension.
+
+        Parameters
+        ----------
+        csv_file_path
+
+        Returns
+        -------
+
+        """
+        if not os.path.isfile(csv_file_path):
+            raise FileNotFoundError
+
+        if not csv_file_path.lower().endswith(".csv"):
+            raise ValueError

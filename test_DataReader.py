@@ -5,8 +5,7 @@ import numpy as np
 
 def test_data_reader_default_duration():
     """Tests that data reader assigns a default value to the duration parameter
-     if one is not assigned during
-    construction.
+     if one is not assigned during construction.
 
     Returns
     -------
@@ -52,3 +51,30 @@ def test_read_csv_voltage():
     dr = DataReader("test_file.csv")
     expected_voltage = np.array([10, 15, 20])
     assert np.array_equal(dr.output_dict["voltage"], expected_voltage)
+
+
+def test_validate_csv_file_bad_file_name():
+    """Tests the validate_csv_file for raising an exception when a
+    file that
+    does not exist is inputted for the csv_file_name argument in DataReader.
+
+    Returns
+    -------
+    None
+    """
+    with pytest.raises(FileNotFoundError):
+        dr = DataReader("random_file_name.csv")
+        dr.validate_csv_file("random_file_name.csv")
+
+
+def test_validate_csv_file_bad_file_extension():
+    """Tests the validate_csv_file function for raising a ValueError when
+    there is a bad file extension (i.e. one that is not .csv)
+
+    Returns
+    -------
+    None
+    """
+    with pytest.raises(ValueError):
+        dr = DataReader("BadExtensionTest.txt")
+        dr.validate_csv_file("BadExtensionTest.txt")
