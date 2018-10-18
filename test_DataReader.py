@@ -139,3 +139,35 @@ def test_validate_csv_data_compare_array_lengths(time_array, voltage_array):
     dr = DataReader("test_file.csv")
     with pytest.raises(ValueError):
         dr.validate_csv_data(time_array, voltage_array)
+
+
+@pytest.mark.parametrize("dict_entry, expected_value", [
+    ("voltage", np.array([10, 15, 20])),
+    ("time", np.array([0, 1, 2])),
+])
+def test_output_dict(dict_entry, expected_value):
+    """
+
+    Parameters
+    ----------
+    dict_entry:     str
+                    String specifying dictionary entry in Data Reader
+                    output_dict
+    expected_value  np.array
+                    Expected value for that dictionary entry in output_dict
+
+    Returns
+    -------
+
+    """
+    dr = DataReader("test_file.csv")
+    assert (dr.output_dict[dict_entry].all() == expected_value.all())
+
+
+@pytest.mark.parametrize("input_duration, expected_duration", [
+    ((0, 2), (0, 2)),
+    ((0, 1), (0, 1)),
+])
+def test_output_dict_duration(input_duration, expected_duration):
+    dr = DataReader("test_file.csv", input_duration)
+    assert dr.output_dict["duration"] == expected_duration
