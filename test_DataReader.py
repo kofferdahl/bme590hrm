@@ -100,3 +100,42 @@ def test_validate_duration(duration_tuple):
 
     with pytest.raises(ValueError):
         dr.validate_duration(time_array, duration_tuple)
+
+
+@pytest.mark.parametrize("time_array, voltage_array", [
+    (np.array([1, 2, np.nan, 4.5]), np.array([1, 2, 3, 4.5])),
+    (np.array([1, 2, 3, 4.5]), np.array([1, 2, np.nan, 4.5])),
+])
+def test_validate_csv_data_check_nan(time_array, voltage_array):
+    """Checks that the validate csv data raises a TypeError when a nan is
+    present in either the time_array or the voltage_array.
+
+    Parameters
+    ----------
+    time_array:     Numpy time array from the csv file.
+    voltage_array:  Numpy voltage array from the csv file.
+
+    Returns
+    -------
+    None
+    """
+    dr = DataReader("test_file.csv")
+    with pytest.raises(TypeError):
+        dr.validate_csv_data(time_array, voltage_array)
+
+
+@pytest.mark.parametrize("time_array, voltage_array", [
+    (np.array([1, 2, 3]), np.array([1, 2])),
+    (np.array([1, 2]), np.array([1, 2, 3])),
+])
+def test_validate_csv_data_compare_array_lengths(time_array, voltage_array):
+    """Checks that validate_csv_data raises a ValueError when the time and
+    voltage arrays are of different lengths.
+
+    Returns
+    -------
+    None
+    """
+    dr = DataReader("test_file.csv")
+    with pytest.raises(ValueError):
+        dr.validate_csv_data(time_array, voltage_array)
