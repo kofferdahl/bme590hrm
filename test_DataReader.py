@@ -5,14 +5,15 @@ import numpy as np
 
 def test_data_reader_default_duration():
     """Tests that data reader assigns a default value to the duration parameter
-     if one is not assigned during construction.
+     if one is not assigned during construction. Default value should be min
+     max values from the time array.
 
     Returns
     -------
     None
     """
     dr = DataReader("test_file.csv")
-    assert dr.duration == (0, 10)
+    assert dr.duration == (0, 2)
 
 
 def test_data_reader_assigned_duration():
@@ -23,8 +24,8 @@ def test_data_reader_assigned_duration():
     -------
     None
     """
-    dr = DataReader("test_file.csv", (10, 20))
-    assert dr.duration == (10, 20)
+    dr = DataReader("test_file.csv", (0, 2))
+    assert dr.duration == (0, 2)
 
 
 def test_read_csv_time():
@@ -78,3 +79,24 @@ def test_validate_csv_file_bad_file_extension():
     with pytest.raises(ValueError):
         dr = DataReader("BadExtensionTest.txt")
         dr.validate_csv_file("BadExtensionTest.txt")
+
+
+@pytest.mark.parametrize("duration_tuple", [
+    (0, 3), # min duration too short
+    (2, 5), # max duration too long
+    (0, 5), # both min and max exceed range of time_array
+])
+def test_validate_duration(duration_tuple):
+    """Tests the validate_duration function, which ensures that a user
+    specified duration in the construction of the data reader object is
+    within the range of time values read in from the CSV file.
+
+    Returns
+    -------
+    None
+    """
+    dr = DataReader("test_file.csv")
+    time_array = np.array([1, 2, 3, 4])
+
+    with pytest.raises(ValueError):
+        dr.validate_duration(time_array, duration_tuple)
