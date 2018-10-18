@@ -14,18 +14,22 @@ class DataReader:
             A tuple containing the start and end times (in seconds) for range
             over which the ECG data will be calculated
         """
+        self.output_dict = {}
         try:
             self.validate_csv_file(csv_file_path)
             self.csv_file_path = csv_file_path
-
-            if duration is None:
-                self.duration = (0, 10)
-            else:
-                self.duration = duration
-
-            self.output_dict = {}
             self.read_csv_file()
 
+            if duration is None:
+                self.duration = (np.amin(self.output_dict["time"]), np.amax(
+                    self.output_dict["time"]))
+            else:
+                try:
+                    self.validate_duration(self.output_dict["time"], duration)
+                    self.duration = duration
+                except ValueError:
+                    print("The duration specified is not valid. Please try "
+                          "again.")
         except FileNotFoundError:
             print("The input file cannot be found. Please try again.")
 
@@ -65,4 +69,26 @@ class DataReader:
             raise FileNotFoundError
 
         if not csv_file_path.lower().endswith(".csv"):
+            raise ValueError
+
+    def validate_duration(self, time_array, duration):
+        """Checks that a user-specified duration for BPM calculation is
+        valid, i.e. within the range of possible time values from the
+        time_array that was read in from the CSV file.
+
+        Parameters
+        ----------
+        time_array: numpy array of time values (from CSV file, or directly
+                    inserted for testing cases.
+        duration:   tuple specifying the min and max times defining the
+                    duration of interest, specified by user.
+
+        Returns
+        -------
+
+        """
+        min_time = np.amin(time_array)
+        max_time = np.amax(time_array)
+
+        if duration[0] < min_time or duration[1] > max_time:
             raise ValueError
