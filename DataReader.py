@@ -26,11 +26,13 @@ class DataReader:
                     self.duration = (
                         np.amin(self.output_dict["time"]),
                         np.amax(self.output_dict["time"]))
+                    self.output_dict["duration"] = self.duration
                 else:
                     try:
                         self.validate_duration(self.output_dict["time"],
                                                duration)
                         self.duration = duration
+                        self.output_dict["duration"] = self.duration
                     except ValueError:
                         print(
                             "The duration specified is not valid. Please try "
