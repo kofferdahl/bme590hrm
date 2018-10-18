@@ -82,9 +82,9 @@ def test_validate_csv_file_bad_file_extension():
 
 
 @pytest.mark.parametrize("duration_tuple", [
-    (0, 3), # min duration too short
-    (2, 5), # max duration too long
-    (0, 5), # both min and max exceed range of time_array
+    (0, 3),  # min duration too short
+    (2, 5),  # max duration too long
+    (0, 5),  # both min and max exceed range of time_array
 ])
 def test_validate_duration(duration_tuple):
     """Tests the validate_duration function, which ensures that a user
