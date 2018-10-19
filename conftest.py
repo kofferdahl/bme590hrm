@@ -1,5 +1,6 @@
 import pytest
 from DataReader import DataReader
+from HRM_Processor import HRM_Processor
 
 
 @pytest.fixture
@@ -11,7 +12,7 @@ def dr():
 
 
 @pytest.fixture
-def hrm():
+def hrm(dr):
     """Create a basic HRM_Processor from the dr object"""
 
     hrm = HRM_Processor(dr)

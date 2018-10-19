@@ -15,3 +15,39 @@ class HRM_Processor:
 
         self.input_data = DataReader.output_dict
         self.output_dict = {}
+        self.write_outputs_to_dict()
+
+    def write_outputs_to_dict(self):
+        """Writes all of the HRM_Processor's outputs to it's output
+        dictionary by calling the relevant functions to generate those outputs.
+
+        Returns
+        -------
+        None
+
+        """
+        voltage_extremes = self.determine_voltage_extremes(self.input_data[
+                                                          "voltage"])
+        self.output_dict["voltage_extremes"] = voltage_extremes
+
+    def determine_voltage_extremes(self, voltage):
+        """Determines the min and max values of the voltage data
+
+        Parameters
+        ----------
+        voltage:    numpy array
+                    Contains the voltage ad
+
+        Returns
+        -------
+        voltage_extremes:   tuple(float, float)
+                            A tuple containing the min and max values of the
+                            voltage data in the format (min, max)
+
+        """
+        voltage_min = np.amin(voltage)
+        voltage_max = np.amax(voltage)
+
+        voltage_extremes = (voltage_min, voltage_max)
+
+        return voltage_extremes
