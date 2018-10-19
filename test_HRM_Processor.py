@@ -18,4 +18,3 @@ def test_HRM_Processor_init(dr):
     """
     hrm_proc = HRM_Processor(dr)
     assert dr.output_dict == hrm_proc.input_data
-
