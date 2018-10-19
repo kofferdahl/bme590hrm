@@ -33,3 +33,16 @@ def test_voltage_extremes(hrm):
 def test_write_outputs_to_dict_voltage_extremes(hrm):
 
     assert hrm.output_dict["voltage_extremes"] == (10.0, 20.0)
+
+
+def test_determine_ecg_strip_duration(hrm):
+    time = np.array([0, 2.2, 5, 7.5])
+
+    strip_duration = hrm.determine_ecg_strip_duration(time)
+
+    assert strip_duration == 7.5
+
+
+def test_write_strip_duration(hrm):
+
+    assert hrm.output_dict["duration"] == 2

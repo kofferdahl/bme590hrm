@@ -30,6 +30,10 @@ class HRM_Processor:
                                                           "voltage"])
         self.output_dict["voltage_extremes"] = voltage_extremes
 
+        ecg_strip_duration = self.determine_ecg_strip_duration(self.input_data[
+                                                                   "time"])
+        self.output_dict["duration"] = ecg_strip_duration
+
     def determine_voltage_extremes(self, voltage):
         """Determines the min and max values of the voltage data
 
@@ -51,3 +55,19 @@ class HRM_Processor:
         voltage_extremes = (voltage_min, voltage_max)
 
         return voltage_extremes
+
+    def determine_ecg_strip_duration(self, time):
+        """
+
+        Parameters
+        ----------
+        time:       np array
+                    Contains the time vector from the CSV file
+
+        Returns
+        -------
+        strip_duration: float
+                        The max time value of the ecg strip = strip duration
+        """
+        strip_duration = np.amax(time)
+        return strip_duration
