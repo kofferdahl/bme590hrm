@@ -36,10 +36,10 @@ class HRM_Processor:
 
         beat_start_times = self.determine_beat_start_times(
             self.input_data["time"], self.input_data["voltage"])
-        self.output_dict["start_times"] = beat_start_times
+        self.output_dict["beats"] = beat_start_times
 
         num_beats = self.determine_num_beats(beat_start_times)
-        self.output_dict["beats"] = num_beats
+        self.output_dict["num_beats"] = num_beats
 
         try:
             mean_hr_bpm = self.determine_bpm(beat_start_times, self.input_data[
