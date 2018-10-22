@@ -38,6 +38,16 @@ class HRM_Processor:
             self.input_data["time"], self.input_data["voltage"])
         self.output_dict["start_times"] = beat_start_times
 
+        num_beats = self.determine_num_beats(beat_start_times)
+        self.output_dict["beats"] = num_beats
+
+        try:
+            mean_hr_bpm = self.determine_bpm(beat_start_times, self.input_data[
+                                                                "duration"])
+            self.output_dict["mean_hr_bpm"] = mean_hr_bpm
+        except ValueError:
+            print("Invalid duration (no beats in that duration)")
+
     def determine_voltage_extremes(self, voltage):
         """Determines the min and max values of the voltage data
 
@@ -225,3 +235,34 @@ class HRM_Processor:
 
         beat_start_times = time[qrs_peak_locations].flatten()
         return beat_start_times
+
+    def determine_num_beats(self, beat_start_times):
+        """Determines the number of beats that occurred based on the number
+        of elements in the beat_start_times array
+
+        Parameters
+        ----------
+        beat_start_times:   numpy array
+                            A numpy array containing the start times (time
+                            of the peak of each QRS complex) fo reach beat
+
+        Returns
+        -------
+        num_beats           int
+                            The number of beats
+        """
+        num_beats = np.size(beat_start_times)
+        return num_beats
+
+    def determine_bpm(self, beat_start_times, duration):
+        start_inx = np.argmax(beat_start_times >= duration[0])
+        end_inx = np.argmax(beat_start_times >= duration[1])
+
+        num_beats_in_duration = end_inx - start_inx
+        time_in_seconds = duration[1] - duration[0]
+        if time_in_seconds == 0:
+            raise ValueError
+        time_in_minutes = time_in_seconds / 60
+
+        mean_hr_bpm = num_beats_in_duration / time_in_minutes
+        return mean_hr_bpm
