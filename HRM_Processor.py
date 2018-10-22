@@ -34,6 +34,10 @@ class HRM_Processor:
                                                                    "time"])
         self.output_dict["duration"] = ecg_strip_duration
 
+        beat_start_times = self.determine_beat_start_times(
+            self.input_data["time"], self.input_data["voltage"])
+        self.output_dict["start_times"] = beat_start_times
+
     def determine_voltage_extremes(self, voltage):
         """Determines the min and max values of the voltage data
 
@@ -71,3 +75,153 @@ class HRM_Processor:
         """
         strip_duration = np.amax(time)
         return strip_duration
+
+    def determine_beat_start_times(self, time, voltage):
+        """
+
+        Parameters
+        ----------
+        time:       Numpy array
+                    Time values read in from CSV file
+        voltage:    Numpy array
+                    Voltages read in from CSV file
+
+        Returns
+        -------
+        start_times:    Numpy array
+                        Start times of each beat (defined as the time of the
+                        peak of each QRS complex)
+        """
+        threshold = self.determine_threshold(voltage)
+        inx_above_threshold = self.find_indices_above_threshold(voltage,
+                                                                threshold)
+        beat_sep_points = self.find_beat_separation_points(inx_above_threshold)
+        qrs_peak_inx = self.find_beat_separation_points(beat_sep_points)
+        start_times = self.index_beat_start_times(time, qrs_peak_inx)
+        return start_times
+
+    def determine_threshold(self, voltage):
+        """Determines the threshold
+
+        Parameters
+        ----------
+        voltage:    Numpy array
+                    The voltage values from the CSV file
+
+        Returns
+        -------
+        threshold:  float
+                    The 'threshold' for the QRS complex, which occurs when
+                    the voltage value is above 75% of its original value.
+        """
+        threshold = 0.75*np.amax(voltage)
+
+        return threshold
+
+    def find_indices_above_threshold(self, voltage, threshold):
+        """Finds the indices of the voltage array where it is above the
+        threshold value.
+
+        Parameters
+        ----------
+        voltage:    Numpy array
+                    The voltage values from the CSV file
+        threshold:  float
+                    The threshold for the QRS complex, determined by the
+                    determine_threshold function.
+
+        Returns
+        -------
+        indices:    Numpy array
+                    The indices for which the voltage data exceeds the
+                    threshold value.
+        """
+        indices = np.argwhere(voltage > threshold).flatten()
+        return indices
+
+    def find_beat_separation_points(self, indices_array):
+        """Find the separation points between beats, i.e. the points where
+        the difference between neighboring elements in the indices_array > 2
+        (which indicates areas where there was 'jump' in indices above the
+        threshold). Then, it indexes those indices in the indices_array,
+        to determine the indices in the original voltage arrays where the
+        'end' of a beat occurs.
+
+        Parameters
+        ----------
+        indices_array:  numpy array
+                        The indices of the voltage array where the voltage
+                        values are above the threshold values.
+
+        Returns
+        -------
+        beat_sep_inx:   numpy array
+                        The indices in the voltage array where there is a
+                        discontinuity b/w voltage indices above the
+                        threshold. So, these represent the points at which
+                        the QRS complex goes below the threshold for each
+                        beat (i.e. the beat separations)
+        """
+
+        diff_array = np.diff(indices_array)
+        beat_seps = np.argwhere(diff_array > 2).flatten()
+        beat_sep_inx = indices_array[beat_seps]
+        return beat_sep_inx
+
+    def find_qrs_peak_indices(self, voltage, beat_sep_inx):
+        """Indexes the voltage array during the QRS complex of each beat (
+        determined by the indices specified in beat_sep_inx), finds the max
+        value in each range, and finds the index of the peak of the QRS
+        complex.
+
+        Parameters
+        ----------
+        voltage:    numpy array
+                    Voltage values read in from CSV file
+        beat_sep_inx:   Numpy array
+                        Indices where the voltage goes below the threshold
+                        value at the end of the QRS complex
+
+        Returns
+        -------
+        qrs_peak_locations  numpy array
+                            The locations of the peak of the QRS complex for
+                            each beat
+        """
+        start_inx = 0
+        qrs_peak_locations = np.array([])
+        for beat_sep in beat_sep_inx:
+            temp = voltage[start_inx:beat_sep+1]
+            qrs_max_loc = start_inx + np.asscalar(np.where(temp == np.amax(
+                temp))[0])
+            qrs_peak_locations = np.append(qrs_peak_locations, qrs_max_loc)
+            start_inx = beat_sep
+        temp = voltage[beat_sep+1:np.alen(voltage)]
+        qrs_max_loc = start_inx + np.asscalar(np.where(temp == np.amax(
+            temp))[0])
+        qrs_peak_locations = np.append(qrs_peak_locations, qrs_max_loc)
+
+        return qrs_peak_locations
+
+    def index_beat_start_times(self, time, qrs_peak_locations):
+        """Determines the beat start times by indexing the time array at the
+        peak of each QRS complex, as determined by qrs_locations.
+
+        Parameters
+        ----------
+        time:               numpy array
+                            Time array read in from the CSV file.
+
+        qrs_peak_locations: numpy array
+                            Contains the indices where the peak of the QRS
+                            complex for each beat is located.
+
+        Returns
+        -------
+        beat_start_times    numpy array
+                            Contains the times where each beat starts (defined
+                            as the time of the peak of the QRS complex)
+        """
+
+        beat_start_times = time[qrs_peak_locations].flatten()
+        return beat_start_times
