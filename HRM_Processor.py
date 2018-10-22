@@ -38,6 +38,9 @@ class HRM_Processor:
             self.input_data["time"], self.input_data["voltage"])
         self.output_dict["start_times"] = beat_start_times
 
+        num_beats = self.determine_num_beats(beat_start_times)
+        self.output_dict["num_beats"] = num_beats
+
     def determine_voltage_extremes(self, voltage):
         """Determines the min and max values of the voltage data
 
@@ -225,3 +228,21 @@ class HRM_Processor:
 
         beat_start_times = time[qrs_peak_locations].flatten()
         return beat_start_times
+
+    def determine_num_beats(self, beat_start_times):
+        """Determines the number of beats that occurred based on the number
+        of elements in the beat_start_times array
+
+        Parameters
+        ----------
+        beat_start_times:   numpy array
+                            A numpy array containing the start times (time
+                            of the peak of each QRS complex) fo reach beat
+
+        Returns
+        -------
+        num_beats           int
+                            The number of beats
+        """
+        num_beats = np.size(beat_start_times)
+        return num_beats
