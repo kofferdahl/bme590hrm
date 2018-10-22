@@ -109,7 +109,7 @@ class DataReader:
         if np.isnan(time_array).any() or np.isnan(voltage_array).any():
             raise TypeError
 
-        if time_array.size is not voltage_array.size:
+        if time_array.size != voltage_array.size:
             raise ValueError
 
     def validate_duration(self, time_array, duration):
