@@ -204,7 +204,6 @@ def test_index_beat_start_times(hrm):
 
     assert np.array_equal(expected_start_times, measured_start_times)
 
-
 def test_determine_num_beats(hrm):
     """Tests the most basic functionality of the determine_num_beats
     function, which simply returns the length of the start_times array that
