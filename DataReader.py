@@ -119,7 +119,7 @@ class DataReader:
 
         Parameters
         ----------
-        time_array: numpy array of time values (from CSV file, or directly
+        time_array: numpy array of time values (from CSV file or directly
                     inserted for testing cases.
         duration:   tuple specifying the min and max times defining the
                     duration of interest, specified by user.

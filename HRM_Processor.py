@@ -39,7 +39,7 @@ class HRM_Processor:
         self.output_dict["start_times"] = beat_start_times
 
         num_beats = self.determine_num_beats(beat_start_times)
-        self.output_dict["num_beats"] = num_beats
+        self.output_dict["beats"] = num_beats
 
     def determine_voltage_extremes(self, voltage):
         """Determines the min and max values of the voltage data
