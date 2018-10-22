@@ -215,3 +215,14 @@ def test_determine_num_beats(hrm):
     measured_num_beats = hrm.determine_num_beats(start_times)
 
     assert expected_num_beats == measured_num_beats
+
+
+def test_determine_bpm(hrm):
+
+    start_times = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+    duration = (3, 7)
+
+    expected_bpm = 60
+    calculated_bpm = hrm.determine_bpm(start_times, duration)
+
+    assert expected_bpm == calculated_bpm
