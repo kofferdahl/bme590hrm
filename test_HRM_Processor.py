@@ -203,3 +203,15 @@ def test_index_beat_start_times(hrm):
     measured_start_times = hrm.index_beat_start_times(time, qrs_peak_locations)
 
     assert np.array_equal(expected_start_times, measured_start_times)
+
+
+def test_determine_num_beats(hrm):
+    """Tests the most basic functionality of the determine_num_beats
+    function, which simply returns the length of the start_times array that
+    has been passed into it."""
+
+    start_times = np.array([1, 2, 3, 4])
+    expected_num_beats = 4
+    measured_num_beats = hrm.determine_num_beats(start_times)
+
+    assert expected_num_beats == measured_num_beats
