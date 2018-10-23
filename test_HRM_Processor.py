@@ -248,6 +248,3 @@ def test_determine_bpm2(hrm):
     calculated_bpm = hrm.determine_bpm(start_times, duration)
 
     assert expected_bpm == calculated_bpm
-
-
-
