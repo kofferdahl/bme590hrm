@@ -227,6 +227,7 @@ def test_determine_bpm(hrm):
 
     assert expected_bpm == calculated_bpm
 
+
 def test_determine_bpm2(hrm):
     """Tests the case where the end of the duration in the bpm of interest
     exceeds the beat start time.
@@ -247,5 +248,6 @@ def test_determine_bpm2(hrm):
     calculated_bpm = hrm.determine_bpm(start_times, duration)
 
     assert expected_bpm == calculated_bpm
+
 
 
