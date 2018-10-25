@@ -1,6 +1,7 @@
 import pytest
 from DataReader import DataReader
 from HRM_Processor import HRM_Processor
+from DataWriter import DataWriter
 
 
 @pytest.fixture
@@ -17,3 +18,12 @@ def hrm(dr):
 
     hrm = HRM_Processor(dr)
     return hrm
+
+
+@pytest.fixture
+def dw():
+    """Create a basic DataWriter object"""
+    dr_for_DW = DataReader('test_data1.csv')
+    hrm_for_DW = HRM_Processor(dr_for_DW)
+    dw = DataWriter(hrm_for_DW)
+    return dw
