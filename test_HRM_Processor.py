@@ -5,31 +5,34 @@ import numpy as np
 
 
 def test_HRM_Processor_init(dr):
-    """
+    """Tests the initialization of the HRM_Processor
+
+    Upon initialization, the HRM_Processor should read in the output_dict
+    from the DataReader, and store it as a input_data property.
 
     Parameters
     ----------
     dr:     DataReader
-            A basic data reader object created from the file test_file.csv
+            A basic HRM_Processor created from the file test_file.csv
             with a default BPM duration.
 
     Returns
     -------
-
+    None
     """
     hrm_proc = HRM_Processor(dr)
-    print(hrm_proc.input_data)
     assert dr.output_dict == hrm_proc.input_data
 
 
 def test_voltage_extremes(hrm):
     """Tests the determine_voltage_extremes function to ensure that it
     returns the max and minimum of a voltage numpy array as a tuple in the
-    form (max, min)
+    form (max, min).
 
     Parameters
     ----------
-    hrm:        A basic HRM_Processor object
+    hrm:    HRM_Processor
+            A basic HRM_Processor made from a DataReader with test_file.csv
 
     Returns
     -------
@@ -50,7 +53,8 @@ def test_write_outputs_to_dict_voltage_extremes(hrm):
 
     Parameters
     ----------
-    hrm:    Basic HRM_Processor object made from test_file.csv
+    hrm:    HRM_Processor
+            A basic HRM_Processor made from a DataReader with test_file.csv
 
     Returns
     -------
@@ -67,7 +71,7 @@ def test_determine_ecg_strip_duration(hrm):
     Parameters
     ----------
     hrm: HRM_Processor
-         Basic HRM_Processor object made from test_file.csv
+         Basic HRM_Processor object made from a DataReader with test_file.csv
 
     Returns
     -------
@@ -88,7 +92,7 @@ def test_write_strip_duration(hrm):
     Parameters
     ----------
     hrm:    HRM_Processor
-            Basic HRM_Processor object created from test_file.csv
+            Basic HRM_Processor made from a DataReader with test_file.csv
 
     Returns
     -------
@@ -105,7 +109,8 @@ def test_determine_threshold(hrm):
     Parameters
     ----------
     hrm:    HRM_Processor
-            Basic HRM_Processor object created from test_file.csv
+            Basic HRM_Processor object made from a DataReader with
+            test_file.csv
     Returns
     -------
     None
@@ -123,7 +128,7 @@ def test_find_indices_above_threshold(hrm):
     Parameters
     ----------
     hrm:    HRM_Processor
-            Basic HRM_Processor object created from test_file.csv
+            Basic HRM_Processor made from a DataReader with test_file.csv
 
     Returns
     -------
@@ -148,11 +153,11 @@ def test_find_beat_separation_points(hrm):
     Parameters
     ----------
     hrm:        HRM_Processor
-                Generic HRM_Processor created from test_file.csv
+                A basic HRM_Processor made from a DataReader with test_file.csv
 
     Returns
     -------
-
+    None
     """
     indices = np.array([1, 2, 3, 4, 5, 10, 11, 12, 14, 30, 31, 32, 40, 41])
     expected_sep_inx = np.array([5, 14, 32])
@@ -191,7 +196,7 @@ def test_index_beat_start_times(hrm):
     Parameters
     ----------
     hrm:    HRM_Processor
-            A basic HRM_Processor created from test_file.csv
+            A basic HRM_Processor made from a DataReader with test_file.csv
 
     Returns
     -------
@@ -208,7 +213,17 @@ def test_index_beat_start_times(hrm):
 def test_determine_num_beats(hrm):
     """Tests the most basic functionality of the determine_num_beats
     function, which simply returns the length of the start_times array that
-    has been passed into it."""
+    has been passed into it.
+
+    Parameters
+    ----------
+    hrm:    HRM_Processor
+            A basic HRM_Processor made from a DataReader with test_file.csv
+
+    Returns
+    -------
+    None
+    """
 
     start_times = np.array([1, 2, 3, 4])
     expected_num_beats = 4
@@ -218,6 +233,17 @@ def test_determine_num_beats(hrm):
 
 
 def test_determine_bpm(hrm):
+    """
+
+    Parameters
+    ----------
+    hrm:    HRM_Processor
+            A basic HRM_Processor made from a DataReader with test_file.csv
+
+    Returns
+    -------
+    None
+    """
 
     start_times = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
     duration = (3, 7)
@@ -234,11 +260,12 @@ def test_determine_bpm2(hrm):
 
     Parameters
     ----------
-    hrm
+    hrm:    HRM_Processor
+            A basic HRM_Processor made from a DataReader with test_file.csv
 
     Returns
     -------
-
+    None
     """
 
     start_times = np.array([1, 2, 3, 4, 5, 6])
