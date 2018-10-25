@@ -35,7 +35,7 @@ def test_DataWriter_init_write_to_dict():
     None
     """
     dr = DataReader("test_data1.csv")
-    hrm = HRM_Processor(dw)
+    hrm = HRM_Processor(dr)
     dw = DataWriter(hrm)
 
     assert os.path.isfile("test_data1.json")
