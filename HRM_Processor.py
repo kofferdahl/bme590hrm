@@ -12,7 +12,7 @@ class HRM_Processor:
                     file and created and output_dict with the relevant data
                     for the HRM_Processor
         """
-
+        self.csv_file = DataReader.csv_file_path
         self.input_data = DataReader.output_dict
         self.output_dict = {}
         self.write_outputs_to_dict()
