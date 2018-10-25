@@ -141,6 +141,25 @@ def test_validate_csv_data_compare_array_lengths(time_array, voltage_array):
         dr.validate_csv_data(time_array, voltage_array)
 
 
+def test_validate_csv_data_compare_array_lengths2():
+    """Checks that the DataReader object does not throw a ValueError when it
+    reads in test_data1.csv, since this type of CSV file has thrown errors
+    where the code mistakenly determines that the time and voltage arrays
+    are not of the same length wwhen they actually are.
+
+    Returns
+    -------
+    None
+    """
+
+    try:
+        dr = DataReader("test_data1.csv")
+
+    except ValueError:
+        pytest.fail("validate_csv_data failed to correctly determine that "
+                    "the time and voltage arrays are of the same length.")
+
+
 @pytest.mark.parametrize("dict_entry, expected_value", [
     ("voltage", np.array([10, 15, 20])),
     ("time", np.array([0, 1, 2])),

@@ -109,7 +109,7 @@ class DataReader:
         if np.isnan(time_array).any() or np.isnan(voltage_array).any():
             raise TypeError
 
-        if time_array.size is not voltage_array.size:
+        if time_array.size != voltage_array.size:
             raise ValueError
 
     def validate_duration(self, time_array, duration):
@@ -119,7 +119,7 @@ class DataReader:
 
         Parameters
         ----------
-        time_array: numpy array of time values (from CSV file, or directly
+        time_array: numpy array of time values (from CSV file or directly
                     inserted for testing cases.
         duration:   tuple specifying the min and max times defining the
                     duration of interest, specified by user.

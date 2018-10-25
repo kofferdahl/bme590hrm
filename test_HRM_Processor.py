@@ -203,3 +203,48 @@ def test_index_beat_start_times(hrm):
     measured_start_times = hrm.index_beat_start_times(time, qrs_peak_locations)
 
     assert np.array_equal(expected_start_times, measured_start_times)
+
+
+def test_determine_num_beats(hrm):
+    """Tests the most basic functionality of the determine_num_beats
+    function, which simply returns the length of the start_times array that
+    has been passed into it."""
+
+    start_times = np.array([1, 2, 3, 4])
+    expected_num_beats = 4
+    measured_num_beats = hrm.determine_num_beats(start_times)
+
+    assert expected_num_beats == measured_num_beats
+
+
+def test_determine_bpm(hrm):
+
+    start_times = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+    duration = (3, 7)
+
+    expected_bpm = 60
+    calculated_bpm = hrm.determine_bpm(start_times, duration)
+
+    assert expected_bpm == calculated_bpm
+
+
+def test_determine_bpm2(hrm):
+    """Tests the case where the end of the duration in the bpm of interest
+    exceeds the beat start time.
+
+    Parameters
+    ----------
+    hrm
+
+    Returns
+    -------
+
+    """
+
+    start_times = np.array([1, 2, 3, 4, 5, 6])
+    duration = (5, 6)
+
+    expected_bpm = 60
+    calculated_bpm = hrm.determine_bpm(start_times, duration)
+
+    assert expected_bpm == calculated_bpm
