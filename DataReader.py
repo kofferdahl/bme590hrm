@@ -1,5 +1,6 @@
 import numpy as np
 import os.path
+from scipy import interpolate
 
 
 class DataReader:
@@ -66,6 +67,11 @@ class DataReader:
 
         voltage = np.genfromtxt(self.csv_file_path, delimiter=',', usecols=(1))
 
+        if np.isnan(time).any():
+            can_interp = self.can_interp(time)
+            if can_interp:
+                time = self.interp_time(time)
+
         self.validate_csv_data(time, voltage)
 
         self.output_dict["time"] = time
@@ -106,11 +112,62 @@ class DataReader:
         -------
         None, but raises value errors if invalid.
         """
+
         if np.isnan(time_array).any() or np.isnan(voltage_array).any():
             raise TypeError
 
         if time_array.size != voltage_array.size:
             raise ValueError
+
+    def can_interp(self, time_array):
+        """Checks to see if a time_array can be interpolated, which would
+        mean that it has less than 10% missing values.
+
+        Parameters
+        ----------
+        time_array: numpy array
+                    A numpy array containing time values read in from the CSV
+
+        Returns
+        -------
+        can_interp: boolean
+                    Specifies if this array can be interpolated
+        """
+
+        is_finite = np.isfinite(time_array)
+        num_defined_vals = sum(is_finite)
+
+        frac_def_vals = num_defined_vals / time_array.size
+
+        if frac_def_vals >= 0.9:
+            can_interp = True
+        else:
+            can_interp = False
+
+        return can_interp
+
+    def interp_time(self, time_array):
+        """
+
+        Parameters
+        ----------
+        time_array: numpy array
+                    Numpy array containing time values from csv file,
+                    with some missing values.
+
+        Returns
+        -------
+        interp_time:    numpy array
+                        A numpy array with the NaNs linearly interpolated.
+        """
+        defined_indicies = np.isfinite(time_array)
+        indices = np.arange(0, time_array.size)
+        interp_funct = interpolate.interp1d(indices[defined_indicies],
+                                            time_array[defined_indicies])
+
+        interp_time = interp_funct(indices)
+
+        return interp_time
 
     def validate_duration(self, time_array, duration):
         """Checks that a user-specified duration for BPM calculation is
