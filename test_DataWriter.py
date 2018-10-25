@@ -1,5 +1,9 @@
-from DataWriter import DataWriter
 import json
+import numpy as np
+import os
+from DataReader import DataReader
+from HRM_Processor import HRM_Processor
+from DataWriter import DataWriter
 
 
 def test_DataWriter_init(hrm):
@@ -19,6 +23,23 @@ def test_DataWriter_init(hrm):
     """
     dw = DataWriter(hrm)
     assert dw.metrics == hrm.output_dict
+
+
+def test_DataWriter_init_write_to_dict():
+    """Tests that the construction of a DataWriter object creates a .json
+    file with the base file name that is the same as the file name of the
+    .csv file passed into the original DataReader.
+
+    Returns
+    -------
+    None
+    """
+    dr = DataReader("test_data1.csv")
+    hrm = HRM_Processor(dr)
+    dw = DataWriter(hrm)
+
+    assert os.path.isfile("test_data1.json")
+    os.remove("test_data1.json")
 
 
 def test_write_to_json(hrm):
@@ -46,3 +67,24 @@ def test_write_to_json(hrm):
         written_data = json.load(infile)
 
     assert written_data == metrics
+
+
+def test_convert_np_arrays(dw):
+    """Tests that the convert_np_arrays function finds the beats entry in
+    teh dictionary and converts it from a numpy array to a python list.
+
+    Parameters
+    ----------
+    dw:     DataWriter
+            A generic DataWriter object made from an original DataReader /
+            HRM_Processor with the file test_data1.csv.
+
+    Returns
+    -------
+    None
+    """
+    metrics_dict = {}
+    metrics_dict["beats"] = np.array([1, 2, 3, 4])
+    serializable_dict = dw.convert_np_arrays(metrics_dict)
+
+    assert isinstance(serializable_dict["beats"], list)
