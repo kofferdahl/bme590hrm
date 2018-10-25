@@ -1,6 +1,7 @@
 import numpy as np
 import os.path
 from scipy import interpolate
+import logging
 
 
 class DataReader:
@@ -15,6 +16,10 @@ class DataReader:
             A tuple containing the start and end times (in seconds) for range
             over which the ECG data will be calculated
         """
+        logging.basicConfig(filename="DataReader_logs.txt",
+                            format='%(asctime)s %(levelname)s:%(message)s',
+                            datefmt='%m/%d/%Y %I:%M:%S %p')
+
         self.output_dict = {}
         try:
             self.validate_csv_file(csv_file_path)
@@ -38,20 +43,31 @@ class DataReader:
                         print(
                             "The duration specified is not valid. Please try "
                             "again.")
+                        logging.error("The duration specified is not valid. "
+                                      "Please try again.")
             except TypeError:
                 print("The csv file has blank or non-numerical values. "
                       "Please remove these and try again.")
+                logging.error("The csv file has blank or non-numerical "
+                              "values. Please remove these and try again.")
+
             except ValueError:
                 print("the length of the time vector is not equal to the "
                       "length of the voltage vector. Please fix this problem"
                       "in the CSV file and try again.")
+                logging.error("the length of the time vector is not equal to "
+                              "the length of the voltage vector. Please fix "
+                              "this problem in the CSV file and try again.")
 
         except FileNotFoundError:
             print("The input file cannot be found. Please try again.")
+            logging.error("The input file cannot be found. Please try again")
 
         except ValueError:
             print("The input file does not have a .csv file extension. "
                   "Please try again with a CSV file.")
+            logging.error("the input file does not have a .csv file "
+                          "extension. Please try again with a CSV file.")
 
     def read_csv_file(self):
         """read_csv_file reads in the CSV file from the csv_file_path
@@ -70,6 +86,8 @@ class DataReader:
         if np.isnan(time).any():
             can_interp = self.can_interp(time)
             if can_interp:
+                print("warning: interpolating missing time values.")
+                self.logger.warning("Interpolating missing time values.")
                 time = self.interp_time(time)
 
         self.validate_csv_data(time, voltage)
