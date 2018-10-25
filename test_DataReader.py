@@ -160,6 +160,43 @@ def test_validate_csv_data_compare_array_lengths2():
                     "the time and voltage arrays are of the same length.")
 
 
+@pytest.mark.parametrize("test_array, expected_can_interp", [
+    (np.append(np.zeros(100), np.full_like(np.zeros(1), np.nan,
+                                           dtype=np.double)), True),
+    (np.append(np.zeros(10), np.full_like(np.zeros(10), np.nan,
+                                          dtype=np.double)), False),
+    (np.append(np.zeros(9), np.full_like(np.zeros(1), np.nan,
+                                         dtype=np.double)), True),
+    (np.append(np.zeros(8), np.full_like(np.zeros(1), np.nan,
+                                         dtype=np.double)), False),
+])
+def test_can_interp(dr, test_array, expected_can_interp):
+    """Tests the can_interp function to determine if it returns true for
+    arrays were more than 90% of values are defined, and returns false for
+    arrays where less than 90% of values are defined
+
+    Parameters
+    ----------
+    dr: DataReader
+        A generic DataReader object from the file test_file.csv
+
+    Returns
+    -------
+
+    """
+    measured_can_interp = dr.can_interp(test_array)
+
+    assert measured_can_interp == expected_can_interp
+
+
+def test_interp_time(dr):
+    time_array = np.array([1, 2, np.nan, 4, 5, np.nan, 7])
+    expected_interp_array = np.array([1, 2, 3, 4, 5, 6, 7])
+    measured_interp_array = dr.interp_time(time_array)
+
+    assert np.array_equal(measured_interp_array, expected_interp_array)
+
+
 @pytest.mark.parametrize("dict_entry, expected_value", [
     ("voltage", np.array([10, 15, 20])),
     ("time", np.array([0, 1, 2])),
