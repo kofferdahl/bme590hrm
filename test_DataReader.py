@@ -112,8 +112,10 @@ def test_validate_csv_data_check_nan(time_array, voltage_array):
 
     Parameters
     ----------
-    time_array:     Numpy time array from the csv file.
-    voltage_array:  Numpy voltage array from the csv file.
+    time_array: Numpy array
+                Time array from the csv file
+    voltage_array:  Numpy array
+                    Voltage array from the csv file.
 
     Returns
     -------
@@ -132,6 +134,13 @@ def test_validate_csv_data_compare_array_lengths(time_array, voltage_array):
     """Checks that validate_csv_data raises a ValueError when the time and
     voltage arrays are of different lengths.
 
+    Parameters
+    ----------
+    time_array: Numpy array
+                Time array from the csv file
+    voltage_array:  Numpy array
+                    Voltage array from the csv file.
+
     Returns
     -------
     None
@@ -143,9 +152,11 @@ def test_validate_csv_data_compare_array_lengths(time_array, voltage_array):
 
 def test_validate_csv_data_compare_array_lengths2():
     """Checks that the DataReader object does not throw a ValueError when it
-    reads in test_data1.csv, since this type of CSV file has thrown errors
-    where the code mistakenly determines that the time and voltage arrays
-    are not of the same length wwhen they actually are.
+    reads in test_data1.csv.
+
+    This type of CSV file has thrown errors where the code mistakenly
+    determines that the time and voltage arrays are not of the same length
+    wwhen they actually are.
 
     Returns
     -------
@@ -178,11 +189,11 @@ def test_can_interp(dr, test_array, expected_can_interp):
     Parameters
     ----------
     dr: DataReader
-        A generic DataReader object from the file test_file.csv
+        A generic DataReader object made from the file test_file.csv
 
     Returns
     -------
-
+    None
     """
     measured_can_interp = dr.can_interp(test_array)
 
@@ -190,6 +201,18 @@ def test_can_interp(dr, test_array, expected_can_interp):
 
 
 def test_interp_time(dr):
+    """Tests that interp_time linearly interpolates missing values in the
+    time_array
+
+    Parameters
+    ----------
+    dr: DataReader
+        A generic DataReader object made from the file test_file.csv
+
+    Returns
+    -------
+    None
+    """
     time_array = np.array([1, 2, np.nan, 4, 5, np.nan, 7])
     expected_interp_array = np.array([1, 2, 3, 4, 5, 6, 7])
     measured_interp_array = dr.interp_time(time_array)
@@ -202,13 +225,15 @@ def test_interp_time(dr):
     ("time", np.array([0, 1, 2])),
 ])
 def test_output_dict(dict_entry, expected_value):
-    """
+    """Tests that the time and voltage values in the output_dict are what
+    was expected, based on the csv file that the DataReader read in.
 
     Parameters
     ----------
     dict_entry:     str
                     String specifying dictionary entry in Data Reader
                     output_dict
+
     expected_value  np.array
                     Expected value for that dictionary entry in output_dict
 
@@ -225,5 +250,19 @@ def test_output_dict(dict_entry, expected_value):
     ((0, 1), (0, 1)),
 ])
 def test_output_dict_duration(input_duration, expected_duration):
+    """Checks that the duration in the DataReader's output_dict is what the
+    user passed into it.
+
+    Parameters
+    ----------
+    input_duration: tuple(float, float)
+                    The duration used to initialize the DataReader
+    expected_duration: tuple(float, float)
+                        The expected duration based on the input.
+
+    Returns
+    -------
+    None
+    """
     dr = DataReader("test_file.csv", input_duration)
     assert dr.output_dict["duration"] == expected_duration

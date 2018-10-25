@@ -5,17 +5,29 @@ import logging
 
 
 class DataReader:
-    def __init__(self, csv_file_path, duration=None):
-        """Constructor for DataReader object, which reads in and formats CSV data.
+    """DataReader handles and formats the CSV file and duration inputs.
 
-        Parameters
-        ----------
-        csv_file_path: str
-            Path indicating the location of the CSV file with ECG data
-        duration: tuple (float, float)
-            A tuple containing the start and end times (in seconds) for range
-            over which the ECG data will be calculated
-        """
+    This object validates the user inputs (file name and optional duration
+    for BPM calculation), and creates a public dictionary, output_dict,
+    containing the user specified duration or a default duration, and numpy
+    arrays with the time and voltage data from the CSV file. The output_dict
+    will be accessed by the HRM_Processor object for processing the ECG signal.
+
+    Attributes
+    ----------
+    csv_file_path:  str
+                    Path indicating the location of the CSV file with ECG data
+    duration:       tuple (float, float)
+                    A tuple containing the start and end times (in seconds) for
+                    range over which the ECG data will be calculated
+    output_dict:    dict
+                    A dictionary containing the relevant output data for the
+                    HRM_Processor - i.e. time and voltage numpy arrays,
+                    and the user specified duration (or a default duration)
+                    for BPM calculation.
+    """
+    def __init__(self, csv_file_path, duration=None):
+
         logging.basicConfig(filename="DataReader_logs.txt",
                             format='%(asctime)s %(levelname)s:%(message)s',
                             datefmt='%m/%d/%Y %I:%M:%S %p')
@@ -71,12 +83,12 @@ class DataReader:
 
     def read_csv_file(self):
         """read_csv_file reads in the CSV file from the csv_file_path
-        property, and outputs a numpy array with the contents of the csv file.
+        property, and writes numpy arrays for time and voltage to the output
+        dictionary of the DataReader object.
 
         Returns
         -------
-        Nothing directly, but writes the time and voltage numpy arrays into
-        the output_dict dictionary property of the DataReader.
+        None
         """
 
         time = np.genfromtxt(self.csv_file_path, delimiter=',', usecols=(0))
@@ -96,7 +108,7 @@ class DataReader:
         self.output_dict["voltage"] = voltage
 
     def validate_csv_file(self, csv_file_path):
-        """Checks to make sure that the csv file exists and has a CSV file
+        """Checks to make sure that the csv file exists and has a csv file
         extension. Called by read_csv_file function.
 
         Parameters
@@ -115,20 +127,24 @@ class DataReader:
             raise ValueError
 
     def validate_csv_data(self, time_array, voltage_array):
-        """Checks that the csv data that has been read in does not have any
-        nans (which implies missing or non-numerical values) and that the
-        time_array and voltage_array are the same length.
+        """Checks that the CSV data that has been read in does not have any
+        NaNs and that the time_array and voltage_array are the same length.
+
+        NaNs imply that there were strings or missing values in the original
+        CSV file, and these values were not able to be interpolated. This
+        function raises a TypeError or ValueError if the data is not valid.
 
         Parameters
         ----------
-        time_array:     Numpy time array read in from CSV file (or specified
-                        directly in testing cases)
-        voltage_array:  Numpy voltage array read in from CSV file (or
-                        specified directly for testing cases)
+        time_array:     Numpy array
+                        Time values read in from CSV file
+
+        voltage_array:  Numpy array
+                        Voltage values read in from CSV file
 
         Returns
         -------
-        None, but raises value errors if invalid.
+        None
         """
 
         if np.isnan(time_array).any() or np.isnan(voltage_array).any():
@@ -144,8 +160,7 @@ class DataReader:
         Parameters
         ----------
         time_array: numpy array
-                    A numpy array containing time values read in from the CSV
-
+                    Time values read in from CSV file
         Returns
         -------
         can_interp: boolean
@@ -165,7 +180,7 @@ class DataReader:
         return can_interp
 
     def interp_time(self, time_array):
-        """
+        """Linearly interpolates missing time values in the time_array
 
         Parameters
         ----------
@@ -188,20 +203,23 @@ class DataReader:
         return interp_time
 
     def validate_duration(self, time_array, duration):
-        """Checks that a user-specified duration for BPM calculation is
-        valid, i.e. within the range of possible time values from the
-        time_array that was read in from the CSV file.
+        """Checks that a user-specified duration for BPM calculation is valid.
+
+        A valid duration is one that is within the range of possible time
+        values from the time_array. This function raises a ValueError
+        exception if the duration is not valid.
 
         Parameters
         ----------
-        time_array: numpy array of time values (from CSV file or directly
-                    inserted for testing cases.
-        duration:   tuple specifying the min and max times defining the
-                    duration of interest, specified by user.
+        time_array: numpy array
+                    Time values read in from the CSV file
+        duration:   tuple(float, float)
+                    Specifies the min and max times of the duration of interest
+                    for BPM calculation in the format (min, max)
 
         Returns
         -------
-
+        None
         """
         min_time = np.amin(time_array)
         max_time = np.amax(time_array)
