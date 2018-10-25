@@ -1,5 +1,6 @@
 from DataWriter import DataWriter
 import json
+import numpy as np
 
 
 def test_DataWriter_init(hrm):
@@ -46,3 +47,24 @@ def test_write_to_json(hrm):
         written_data = json.load(infile)
 
     assert written_data == metrics
+
+
+def test_convert_np_arrays(dw):
+    """Tests that the convert_np_arrays function finds the beats entry in
+    teh dictionary and converts it from a numpy array to a python list.
+
+    Parameters
+    ----------
+    dw:     DataWriter
+            A generic DataWriter object made from an original DataReader /
+            HRM_Processor with the file test_data1.csv.
+
+    Returns
+    -------
+    None
+    """
+    metrics_dict = {}
+    metrics_dict["beats"] = np.array([1, 2, 3, 4])
+    serializable_dict = dw.convert_np_arrays(metrics_dict)
+
+    assert isinstance(serializable_dict["beats"], list)
