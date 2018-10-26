@@ -1,8 +1,20 @@
 import json
 import os
+import logging
 
 
 class DataWriter:
+    """Writes the output metrics from the HRM_Processor to a JSON file.
+
+    Attributes
+    ----------
+    metrics:    dict
+                A dictionary containing the heart rate metrics from the
+                HRM_Processor
+
+    csv_file:   str
+                The name of the CSV file with the original ECG data
+    """
     def __init__(self, hrm):
         """Constructor for DataWriter Object
 
@@ -13,10 +25,22 @@ class DataWriter:
                 relevant output parameters to be written to the JSON file.
         """
 
-        self.metrics = self.convert_np_arrays(hrm.output_dict)
-        self.csv_file = hrm.csv_file
-        output_file = self.get_output_file_name(self.csv_file)
-        self.write_to_json(self.metrics, output_file)
+        logging.basicConfig(filename="DataWriter_logs.txt",
+                            format='%(asctime)s %(levelname)s:%(message)s',
+                            datefmt='%m/%d/%Y %I:%M:%S %p')
+
+        if hrm.isValid:
+            self.metrics = self.convert_np_arrays(hrm.output_dict)
+            self.csv_file = hrm.csv_file
+            output_file = self.get_output_file_name(self.csv_file)
+            self.write_to_json(self.metrics, output_file)
+
+        else:
+            print("Error: Data is too noisy for heart rate calculation. "
+                  "These data will not be written to a JSON file.")
+            logging.error("Data from " + hrm.csv_file + " is too noisy. JSON "
+                                                        "file will not be "
+                                                        "written.")
 
     def get_output_file_name(self, csv_file):
         """Finds the root file name (i.e. the file name without the .csv
@@ -33,8 +57,8 @@ class DataWriter:
         output_file str
                     The output file path, which is the same as the csv_file
                     name with a .json extension instead of a .csv extension
-
         """
+
         root_file_name = os.path.splitext(csv_file)[0]
         output_file = root_file_name + ".json"
         return output_file

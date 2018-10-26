@@ -6,7 +6,7 @@ from HRM_Processor import HRM_Processor
 from DataWriter import DataWriter
 
 
-def test_DataWriter_init(hrm):
+def test_DataWriter_init_valid_case(hrm):
     """Tests the initialization of the DataWriter object, and that it
     successfully gets the output_dict from the input_dict and stores it as
     metrics.
@@ -14,15 +14,40 @@ def test_DataWriter_init(hrm):
     Parameters
     ----------
     hrm:    HRM_Processor
-            Generic HRM_Procesor made from test_file.csv
+            Generic HRM_Processor made from a DataReader with test_file.csv
 
     Returns
     -------
     None
 
     """
+    hrm.isValid = True  # Force validity for testing case
     dw = DataWriter(hrm)
     assert dw.metrics == hrm.output_dict
+
+
+def test_DataWriter_init_invalid_case(hrm, capsys):
+    """Tests the initialization of the DataWriter object for a case where
+    the data from the HRM_Processor object is not valid.
+
+    Parameters
+    ----------
+    hrm:    HRM_Processor
+            Generic HRM_Processor made from a DataReader with test_file.csv
+    capsys: Pytest fixture
+            A decorator for getting outputs printed to the console
+    Returns
+    -------
+    None
+
+    """
+    hrm.isValid = False  # Force invalidity for testing case
+    dw = DataWriter(hrm)
+    captured_output, err = capsys.readouterr()
+
+    assert captured_output == "Error: Data is too noisy for heart rate " \
+                              "calculation. These data will not be written " \
+                              "to a JSON file.\n"
 
 
 def test_DataWriter_init_write_to_dict():
@@ -50,7 +75,7 @@ def test_write_to_json(hrm):
     Parameters
     ----------
     hrm:    HRM_Processor
-            A generic HRM_Processor made from test_file.csv
+            A generic HRM_Processor made from a DataReader with test_file.csv
 
     Returns
     -------
