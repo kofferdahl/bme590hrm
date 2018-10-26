@@ -47,6 +47,8 @@ def main():
     hrm = HRM_Processor(dr)
     dw = DataWriter(hrm)
 
+    logging.info("Successful termination of HRM_Driver")
+
 
 if __name__ == "__main__":
     main()

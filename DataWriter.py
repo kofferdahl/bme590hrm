@@ -34,6 +34,8 @@ class DataWriter:
             self.csv_file = hrm.csv_file
             output_file = self.get_output_file_name(self.csv_file)
             self.write_to_json(self.metrics, output_file)
+            logging.info("File: " + output_file + " has been written "
+                                                  "successfully!")
 
         else:
             print("Error: Data is too noisy for heart rate calculation. "
