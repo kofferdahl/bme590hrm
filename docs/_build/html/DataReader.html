@@ -1,0 +1,293 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>DataReader module &#8212; bme590 Heart Rate Monitor  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-DataReader">
+<span id="datareader-module"></span><h1>DataReader module<a class="headerlink" href="#module-DataReader" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="DataReader.DataReader">
+<em class="property">class </em><code class="descclassname">DataReader.</code><code class="descname">DataReader</code><span class="sig-paren">(</span><em>csv_file_path</em>, <em>duration=None</em><span class="sig-paren">)</span><a class="headerlink" href="#DataReader.DataReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>DataReader handles and formats the CSV file and duration inputs.</p>
+<p>This object validates the user inputs (file name and optional duration
+for BPM calculation), and creates a public dictionary, output_dict,
+containing the user specified duration or a default duration, and numpy
+arrays with the time and voltage data from the CSV file. The output_dict
+will be accessed by the HRM_Processor object for processing the ECG signal.</p>
+<dl class="attribute">
+<dt id="DataReader.DataReader.csv_file_path">
+<code class="descname">csv_file_path</code><a class="headerlink" href="#DataReader.DataReader.csv_file_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path indicating the location of the CSV file with ECG data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="DataReader.DataReader.duration">
+<code class="descname">duration</code><a class="headerlink" href="#DataReader.DataReader.duration" title="Permalink to this definition">¶</a></dt>
+<dd><p>A tuple containing the start and end times (in seconds) for
+range over which the ECG data will be calculated</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">tuple (float, float)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="DataReader.DataReader.output_dict">
+<code class="descname">output_dict</code><a class="headerlink" href="#DataReader.DataReader.output_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary containing the relevant output data for the
+HRM_Processor - i.e. time and voltage numpy arrays,
+and the user specified duration (or a default duration)
+for BPM calculation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DataReader.DataReader.can_interp">
+<code class="descname">can_interp</code><span class="sig-paren">(</span><em>time_array</em><span class="sig-paren">)</span><a class="headerlink" href="#DataReader.DataReader.can_interp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks to see if a time_array can be interpolated, which would
+mean that it has less than 10% missing values.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>time_array</strong> (<em>numpy array</em>) – Time values read in from CSV file</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>can_interp</strong> – Specifies if this array can be interpolated</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">boolean</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DataReader.DataReader.interp_time">
+<code class="descname">interp_time</code><span class="sig-paren">(</span><em>time_array</em><span class="sig-paren">)</span><a class="headerlink" href="#DataReader.DataReader.interp_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Linearly interpolates missing time values in the time_array</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>time_array</strong> (<em>numpy array</em>) – Numpy array containing time values from csv file,
+with some missing values.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>interp_time</strong> – A numpy array with the NaNs linearly interpolated.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">numpy array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DataReader.DataReader.read_csv_file">
+<code class="descname">read_csv_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DataReader.DataReader.read_csv_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>read_csv_file reads in the CSV file from the csv_file_path
+property, and writes numpy arrays for time and voltage to the output
+dictionary of the DataReader object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DataReader.DataReader.validate_csv_data">
+<code class="descname">validate_csv_data</code><span class="sig-paren">(</span><em>time_array</em>, <em>voltage_array</em><span class="sig-paren">)</span><a class="headerlink" href="#DataReader.DataReader.validate_csv_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that the CSV data that has been read in does not have any
+NaNs and that the time_array and voltage_array are the same length.</p>
+<p>NaNs imply that there were strings or missing values in the original
+CSV file, and these values were not able to be interpolated. This
+function raises a TypeError or ValueError if the data is not valid.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>time_array</strong> (<em>Numpy array</em>) – Time values read in from CSV file</li>
+<li><strong>voltage_array</strong> (<em>Numpy array</em>) – Voltage values read in from CSV file</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DataReader.DataReader.validate_csv_file">
+<code class="descname">validate_csv_file</code><span class="sig-paren">(</span><em>csv_file_path</em><span class="sig-paren">)</span><a class="headerlink" href="#DataReader.DataReader.validate_csv_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks to make sure that the csv file exists and has a csv file
+extension. Called by read_csv_file function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>csv_file_path</strong> (<em>str</em>) – Path of the csv file</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DataReader.DataReader.validate_duration">
+<code class="descname">validate_duration</code><span class="sig-paren">(</span><em>time_array</em>, <em>duration</em><span class="sig-paren">)</span><a class="headerlink" href="#DataReader.DataReader.validate_duration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that a user-specified duration for BPM calculation is valid.</p>
+<p>A valid duration is one that is within the range of possible time
+values from the time_array. This function raises a ValueError
+exception if the duration is not valid.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>time_array</strong> (<em>numpy array</em>) – Time values read in from the CSV file</li>
+<li><strong>duration</strong> (<em>tuple</em><em>(</em><em>float</em><em>, </em><em>float</em><em>)</em>) – Specifies the min and max times of the duration of interest
+for BPM calculation in the format (min, max)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">bme590 Heart Rate Monitor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Katelyn Offerdahl.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/DataReader.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
