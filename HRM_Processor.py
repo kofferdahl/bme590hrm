@@ -44,13 +44,11 @@ class HRM_Processor:
         try:
             self.validate_outputs(self.output_dict)
         except ValueError:
-            print("The heart rate monitor has calculated a heart rate that "
-                  "is not physiologically realistic. This is likely due to "
-                  "a high level of signal noise. These misleading / "
-                  "inaccurate outputs will not be written to a JSON file.")
-            logging.error("Invalid BPM calculated from ECG strip. isValid "
-                          "flag set to false preventing this misleading data "
-                          "from being written to a JSON file.")
+            print("Warning: The heart rate monitor has calculated a heart "
+                  "rate that is not physiologically realistic.")
+            logging.warning("Invalid BPM calculated from ECG strip. isValid "
+                            "flag set to false preventing this misleading "
+                            "data from being written to a JSON file.")
             self.isValid = False
 
     def write_outputs_to_dict(self):
