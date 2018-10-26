@@ -1,5 +1,5 @@
 import numpy as np
-import pytest
+import logging
 
 
 class HRM_Processor:
@@ -32,6 +32,11 @@ class HRM_Processor:
                     file and created and output_dict with the relevant data
                     for the HRM_Processor
         """
+
+        logging.basicConfig(filename="HRM_Processor_logs.txt",
+                            format='%(asctime)s %(levelname)s:%(message)s',
+                            datefmt='%m/%d/%Y %I:%M:%S %p')
+
         self.csv_file = DataReader.csv_file_path
         self.input_data = DataReader.output_dict
         self.output_dict = {}
@@ -43,6 +48,9 @@ class HRM_Processor:
                   "is not physiologically realistic. This is likely due to "
                   "a high level of signal noise. These misleading / "
                   "inaccurate outputs will not be written to a JSON file.")
+            logging.error("Invalid BPM calculated from ECG strip. isValid "
+                          "flag set to false preventing this misleading data "
+                          "from being written to a JSON file.")
             self.isValid = False
 
     def write_outputs_to_dict(self):
@@ -75,6 +83,8 @@ class HRM_Processor:
             self.output_dict["mean_hr_bpm"] = mean_hr_bpm
         except ValueError:
             print("Invalid duration (no beats in that duration)")
+            logging.error("ValueError: Invalid number of beats in specified "
+                          "duration for BPM calculations.")
 
     def validate_outputs(self, output_dict):
         """Validates the outputs in the output_dict to determine if the
@@ -139,6 +149,8 @@ class HRM_Processor:
         if abs(voltage_extremes[0]) > 300 or abs(voltage_extremes[1] > 300):
             print("Warning: voltage values exceed expected levels for a "
                   "typical ECG signal. This data may not be valid.")
+            logging.warning("The voltage values exceed expected values for a"
+                            "typical ECG signal. This data may not be valid.")
 
     def determine_ecg_strip_duration(self, time):
         """Determines the length of the ECG strip
