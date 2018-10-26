@@ -3,6 +3,10 @@ from DataReader import DataReader
 from HRM_Processor import HRM_Processor
 from DataWriter import DataWriter
 
+"""This file containing fixtures creating variables that are used throughout
+the testing functions for the DataReader, HRM_Processor, and DataWriter.
+"""
+
 
 @pytest.fixture
 def dr():

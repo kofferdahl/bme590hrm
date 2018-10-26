@@ -44,8 +44,8 @@ class DataWriter:
         output_file str
                     The output file path, which is the same as the csv_file
                     name with a .json extension instead of a .csv extension
-
         """
+
         root_file_name = os.path.splitext(csv_file)[0]
         output_file = root_file_name + ".json"
         return output_file
