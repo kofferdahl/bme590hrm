@@ -3,6 +3,17 @@ import os
 
 
 class DataWriter:
+    """Writes the output metrics from the HRM_Processor to a JSON file.
+
+    Attributes
+    ----------
+    metrics:    dict
+                A dictionary containing the heart rate metrics from the
+                HRM_Processor
+
+    csv_file:   str
+                The name of the CSV file with the original ECG data
+    """
     def __init__(self, hrm):
         """Constructor for DataWriter Object
 
@@ -33,8 +44,8 @@ class DataWriter:
         output_file str
                     The output file path, which is the same as the csv_file
                     name with a .json extension instead of a .csv extension
-
         """
+
         root_file_name = os.path.splitext(csv_file)[0]
         output_file = root_file_name + ".json"
         return output_file

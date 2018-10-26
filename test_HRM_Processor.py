@@ -5,31 +5,34 @@ import numpy as np
 
 
 def test_HRM_Processor_init(dr):
-    """
+    """Tests the initialization of the HRM_Processor
+
+    Upon initialization, the HRM_Processor should read in the output_dict
+    from the DataReader, and store it as a input_data property.
 
     Parameters
     ----------
     dr:     DataReader
-            A basic data reader object created from the file test_file.csv
+            A basic HRM_Processor created from the file test_file.csv
             with a default BPM duration.
 
     Returns
     -------
-
+    None
     """
     hrm_proc = HRM_Processor(dr)
-    print(hrm_proc.input_data)
     assert dr.output_dict == hrm_proc.input_data
 
 
 def test_voltage_extremes(hrm):
     """Tests the determine_voltage_extremes function to ensure that it
     returns the max and minimum of a voltage numpy array as a tuple in the
-    form (max, min)
+    form (max, min).
 
     Parameters
     ----------
-    hrm:        A basic HRM_Processor object
+    hrm:    HRM_Processor
+            A basic HRM_Processor made from a DataReader with test_file.csv
 
     Returns
     -------
@@ -50,7 +53,8 @@ def test_write_outputs_to_dict_voltage_extremes(hrm):
 
     Parameters
     ----------
-    hrm:    Basic HRM_Processor object made from test_file.csv
+    hrm:    HRM_Processor
+            A basic HRM_Processor made from a DataReader with test_file.csv
 
     Returns
     -------
@@ -67,7 +71,7 @@ def test_determine_ecg_strip_duration(hrm):
     Parameters
     ----------
     hrm: HRM_Processor
-         Basic HRM_Processor object made from test_file.csv
+         Basic HRM_Processor object made from a DataReader with test_file.csv
 
     Returns
     -------
@@ -88,7 +92,7 @@ def test_write_strip_duration(hrm):
     Parameters
     ----------
     hrm:    HRM_Processor
-            Basic HRM_Processor object created from test_file.csv
+            Basic HRM_Processor made from a DataReader with test_file.csv
 
     Returns
     -------
@@ -105,7 +109,8 @@ def test_determine_threshold(hrm):
     Parameters
     ----------
     hrm:    HRM_Processor
-            Basic HRM_Processor object created from test_file.csv
+            Basic HRM_Processor object made from a DataReader with
+            test_file.csv
     Returns
     -------
     None
@@ -123,7 +128,7 @@ def test_find_indices_above_threshold(hrm):
     Parameters
     ----------
     hrm:    HRM_Processor
-            Basic HRM_Processor object created from test_file.csv
+            Basic HRM_Processor made from a DataReader with test_file.csv
 
     Returns
     -------
@@ -148,11 +153,11 @@ def test_find_beat_separation_points(hrm):
     Parameters
     ----------
     hrm:        HRM_Processor
-                Generic HRM_Processor created from test_file.csv
+                A basic HRM_Processor made from a DataReader with test_file.csv
 
     Returns
     -------
-
+    None
     """
     indices = np.array([1, 2, 3, 4, 5, 10, 11, 12, 14, 30, 31, 32, 40, 41])
     expected_sep_inx = np.array([5, 14, 32])
@@ -191,7 +196,7 @@ def test_index_beat_start_times(hrm):
     Parameters
     ----------
     hrm:    HRM_Processor
-            A basic HRM_Processor created from test_file.csv
+            A basic HRM_Processor made from a DataReader with test_file.csv
 
     Returns
     -------
@@ -208,7 +213,17 @@ def test_index_beat_start_times(hrm):
 def test_determine_num_beats(hrm):
     """Tests the most basic functionality of the determine_num_beats
     function, which simply returns the length of the start_times array that
-    has been passed into it."""
+    has been passed into it.
+
+    Parameters
+    ----------
+    hrm:    HRM_Processor
+            A basic HRM_Processor made from a DataReader with test_file.csv
+
+    Returns
+    -------
+    None
+    """
 
     start_times = np.array([1, 2, 3, 4])
     expected_num_beats = 4
@@ -218,6 +233,17 @@ def test_determine_num_beats(hrm):
 
 
 def test_determine_bpm(hrm):
+    """
+
+    Parameters
+    ----------
+    hrm:    HRM_Processor
+            A basic HRM_Processor made from a DataReader with test_file.csv
+
+    Returns
+    -------
+    None
+    """
 
     start_times = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
     duration = (3, 7)
@@ -234,11 +260,12 @@ def test_determine_bpm2(hrm):
 
     Parameters
     ----------
-    hrm
+    hrm:    HRM_Processor
+            A basic HRM_Processor made from a DataReader with test_file.csv
 
     Returns
     -------
-
+    None
     """
 
     start_times = np.array([1, 2, 3, 4, 5, 6])
@@ -248,3 +275,120 @@ def test_determine_bpm2(hrm):
     calculated_bpm = hrm.determine_bpm(start_times, duration)
 
     assert expected_bpm == calculated_bpm
+
+
+@pytest.mark.parametrize("voltage_extremes", [
+    (0, 500),
+    (-500, 0),
+    (-301, 5),
+    (1000, 10000),
+])
+def test_check_voltage_extremes_warnings(hrm, capsys, voltage_extremes):
+    """Tests that the check_voltage_extremes function prints a warning when
+    the absolute value of a voltage extreme is greater than 300.
+
+    Parameters
+    ----------
+    hrm:    HRM_Processor
+            A generic HRM_Processor made from a DataReader with test_file.csv
+    capsys: Pytest fixture
+            A pytest fixture for getting outputs printed to the console
+    voltage_extremes:   tuple(float, float)
+                        Voltage extremes in the format (min, max)
+
+    Returns
+    -------
+    None
+    """
+    hrm.check_voltage_extremes(voltage_extremes)
+    captured_output, err = capsys.readouterr()
+
+    assert captured_output == "Warning: voltage values exceed expected " \
+                              "levels for a typical ECG signal. This " \
+                              "data may not be valid.\n"
+
+
+@pytest.mark.parametrize("voltage_extremes", [
+    (0, 300),
+    (-300, 0),
+    (-150, 5),
+    (10, 100),
+])
+def test_check_voltage_extremes_no_warnings(hrm, capsys, voltage_extremes):
+    """Tests that the check_voltage_extremes function does prints a warning
+    when the absolute value of both voltage extremes is less than or equal to
+    300.
+
+    Parameters
+    ----------
+    hrm:    HRM_Processor
+            A generic HRM_Processor made from a DataReader with test_file.csv
+    capsys: Pytest fixture
+            A pytest fixture for getting outputs printed to the console
+    voltage_extremes:   tuple(float, float)
+                        Voltage extremes in the format (min, max)
+
+    Returns
+    -------
+    None
+    """
+    hrm.check_voltage_extremes(voltage_extremes)
+    captured_output, err = capsys.readouterr()
+
+    assert captured_output == ''
+
+
+@pytest.mark.parametrize("num_beats, duration, is_realistic", [
+    (50, 60.0, True),
+    (60, 60.0, True),
+    (151, 60.0, False),
+    (35, 60.0, False),
+])
+def test_is_realistic_num_beats(hrm, num_beats, duration, is_realistic):
+    """Tests that the is_realistic_num_beats correctly determines is the
+    number of beats is physiologically realistic for a given strip duration.
+
+    THe duration of the strip is measured in seconds. An unrealistic number
+    of beats is defined as less than 36 BPM or greater than 150 BPM.
+
+    Parameters
+    ----------
+    hrm:        HRM_Processor
+                A generic HRM_Processor made from a DataReader with
+                test_file.csv
+    num_beats:  int
+                The number of beats in a ECG sequence
+    duration:   float
+                The duration of the ECG sequence in seconds
+    is_realistic:   boolean
+                    True if the number of beats is physiologically realistic.
+
+    Returns
+    -------
+    None
+    """
+    measured_is_realistic = hrm.is_unrealistic_num_beats(num_beats, duration)
+
+    assert measured_is_realistic == is_realistic
+
+
+def test_validate_outputs_invalid_case(hrm):
+    """Checks that the validate_outputs function raises a ValueError when
+    the number of beats is not physiologically realistic for a ECG strip
+    duration.
+
+    Parameters
+    ----------
+    hrm:    HRM_Processor
+            A generic HRM_Processor object made from a DataReader with
+            test_file.csv
+
+    Returns
+    -------
+    None
+    """
+    output_dict = {"num_beats": 10000, "duration": 60, "voltage_extremes": (
+        0, 200)}
+
+    with pytest.raises(ValueError):
+        hrm.validate_outputs(output_dict)
