@@ -1,5 +1,6 @@
 import json
 import os
+import logging
 
 
 class DataWriter:
@@ -24,10 +25,22 @@ class DataWriter:
                 relevant output parameters to be written to the JSON file.
         """
 
-        self.metrics = self.convert_np_arrays(hrm.output_dict)
-        self.csv_file = hrm.csv_file
-        output_file = self.get_output_file_name(self.csv_file)
-        self.write_to_json(self.metrics, output_file)
+        logging.basicConfig(filename="DataWriter_logs.txt",
+                            format='%(asctime)s %(levelname)s:%(message)s',
+                            datefmt='%m/%d/%Y %I:%M:%S %p')
+
+        if hrm.isValid:
+            self.metrics = self.convert_np_arrays(hrm.output_dict)
+            self.csv_file = hrm.csv_file
+            output_file = self.get_output_file_name(self.csv_file)
+            self.write_to_json(self.metrics, output_file)
+
+        else:
+            print("Error: Data is too noisy for heart rate calculation. "
+                  "These data will not be written to a JSON file.")
+            logging.error("Data from " + hrm.csv_file + " is too noisy. JSON "
+                                                        "file will not be "
+                                                        "written.")
 
     def get_output_file_name(self, csv_file):
         """Finds the root file name (i.e. the file name without the .csv
