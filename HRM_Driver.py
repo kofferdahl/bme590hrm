@@ -29,6 +29,10 @@ def get_duration():
 
 
 def main():
+    logging.basicConfig(filename="HRM_logs.txt",
+                        format='%(asctime)s %(levelname)s:%(message)s',
+                        datefmt='%m/%d/%Y %I:%M:%S %p')
+
     file_name = get_file_name()
 
     wants_duration = get_wants_duration()
@@ -42,6 +46,8 @@ def main():
 
     hrm = HRM_Processor(dr)
     dw = DataWriter(hrm)
+
+    logging.info("Successful termination of HRM_Driver")
 
 
 if __name__ == "__main__":

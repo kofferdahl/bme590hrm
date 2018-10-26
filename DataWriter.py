@@ -25,7 +25,7 @@ class DataWriter:
                 relevant output parameters to be written to the JSON file.
         """
 
-        logging.basicConfig(filename="DataWriter_logs.txt",
+        logging.basicConfig(filename="HRM_logs.txt",
                             format='%(asctime)s %(levelname)s:%(message)s',
                             datefmt='%m/%d/%Y %I:%M:%S %p')
 
@@ -34,6 +34,8 @@ class DataWriter:
             self.csv_file = hrm.csv_file
             output_file = self.get_output_file_name(self.csv_file)
             self.write_to_json(self.metrics, output_file)
+            logging.info("File: " + output_file + " has been written "
+                                                  "successfully!")
 
         else:
             print("Error: Data is too noisy for heart rate calculation. "

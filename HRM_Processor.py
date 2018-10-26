@@ -33,7 +33,7 @@ class HRM_Processor:
                     for the HRM_Processor
         """
 
-        logging.basicConfig(filename="HRM_Processor_logs.txt",
+        logging.basicConfig(filename="HRM_logs.txt",
                             format='%(asctime)s %(levelname)s:%(message)s',
                             datefmt='%m/%d/%Y %I:%M:%S %p')
 
