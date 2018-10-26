@@ -1,0 +1,320 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>test_HRM_Processor module &#8212; bme590 Heart Rate Monitor  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-test_HRM_Processor">
+<span id="test-hrm-processor-module"></span><h1>test_HRM_Processor module<a class="headerlink" href="#module-test_HRM_Processor" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="test_HRM_Processor.test_HRM_Processor_init">
+<code class="descclassname">test_HRM_Processor.</code><code class="descname">test_HRM_Processor_init</code><span class="sig-paren">(</span><em>dr</em><span class="sig-paren">)</span><a class="headerlink" href="#test_HRM_Processor.test_HRM_Processor_init" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dr</strong> (<a class="reference internal" href="DataReader.html#DataReader.DataReader" title="DataReader.DataReader"><em>DataReader</em></a>) – A basic data reader object created from the file test_file.csv
+with a default BPM duration.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="test_HRM_Processor.test_determine_bpm">
+<code class="descclassname">test_HRM_Processor.</code><code class="descname">test_determine_bpm</code><span class="sig-paren">(</span><em>hrm</em><span class="sig-paren">)</span><a class="headerlink" href="#test_HRM_Processor.test_determine_bpm" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="test_HRM_Processor.test_determine_bpm2">
+<code class="descclassname">test_HRM_Processor.</code><code class="descname">test_determine_bpm2</code><span class="sig-paren">(</span><em>hrm</em><span class="sig-paren">)</span><a class="headerlink" href="#test_HRM_Processor.test_determine_bpm2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests the case where the end of the duration in the bpm of interest
+exceeds the beat start time.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>hrm</strong> – </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="test_HRM_Processor.test_determine_ecg_strip_duration">
+<code class="descclassname">test_HRM_Processor.</code><code class="descname">test_determine_ecg_strip_duration</code><span class="sig-paren">(</span><em>hrm</em><span class="sig-paren">)</span><a class="headerlink" href="#test_HRM_Processor.test_determine_ecg_strip_duration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that the determine_ecg_strip duration function the max value
+of the time numpy array that it is given.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>hrm</strong> (<a class="reference internal" href="HRM_Processor.html#HRM_Processor.HRM_Processor" title="HRM_Processor.HRM_Processor"><em>HRM_Processor</em></a>) – Basic HRM_Processor object made from test_file.csv</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="test_HRM_Processor.test_determine_num_beats">
+<code class="descclassname">test_HRM_Processor.</code><code class="descname">test_determine_num_beats</code><span class="sig-paren">(</span><em>hrm</em><span class="sig-paren">)</span><a class="headerlink" href="#test_HRM_Processor.test_determine_num_beats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests the most basic functionality of the determine_num_beats
+function, which simply returns the length of the start_times array that
+has been passed into it.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="test_HRM_Processor.test_determine_threshold">
+<code class="descclassname">test_HRM_Processor.</code><code class="descname">test_determine_threshold</code><span class="sig-paren">(</span><em>hrm</em><span class="sig-paren">)</span><a class="headerlink" href="#test_HRM_Processor.test_determine_threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that the determine_threshold function returns 90% of the
+highest value in a numpy array</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>hrm</strong> (<a class="reference internal" href="HRM_Processor.html#HRM_Processor.HRM_Processor" title="HRM_Processor.HRM_Processor"><em>HRM_Processor</em></a>) – Basic HRM_Processor object created from test_file.csv</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="test_HRM_Processor.test_find_beat_separation_points">
+<code class="descclassname">test_HRM_Processor.</code><code class="descname">test_find_beat_separation_points</code><span class="sig-paren">(</span><em>hrm</em><span class="sig-paren">)</span><a class="headerlink" href="#test_HRM_Processor.test_find_beat_separation_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests the find_beat_separation_points function, which finds indices
+in an array of indices where there is a separation between consecutive
+indices greater than 2 (indicating the likely start of a new beat/QRS
+complex).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>hrm</strong> (<a class="reference internal" href="HRM_Processor.html#HRM_Processor.HRM_Processor" title="HRM_Processor.HRM_Processor"><em>HRM_Processor</em></a>) – Generic HRM_Processor created from test_file.csv</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="test_HRM_Processor.test_find_indices_above_threshold">
+<code class="descclassname">test_HRM_Processor.</code><code class="descname">test_find_indices_above_threshold</code><span class="sig-paren">(</span><em>hrm</em><span class="sig-paren">)</span><a class="headerlink" href="#test_HRM_Processor.test_find_indices_above_threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests that the find_indices_above_threshold function finds the
+indices where the voltage numpy array are above a specified threshold.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>hrm</strong> (<a class="reference internal" href="HRM_Processor.html#HRM_Processor.HRM_Processor" title="HRM_Processor.HRM_Processor"><em>HRM_Processor</em></a>) – Basic HRM_Processor object created from test_file.csv</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="test_HRM_Processor.test_find_qrs_peak_indices">
+<code class="descclassname">test_HRM_Processor.</code><code class="descname">test_find_qrs_peak_indices</code><span class="sig-paren">(</span><em>hrm</em><span class="sig-paren">)</span><a class="headerlink" href="#test_HRM_Processor.test_find_qrs_peak_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests the find_qrs_peak_indices function, which should be able to
+find the maximum value in a voltage array within a range specified by
+the beat_sep_inx array.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>hrm</strong> (<a class="reference internal" href="HRM_Processor.html#HRM_Processor.HRM_Processor" title="HRM_Processor.HRM_Processor"><em>HRM_Processor</em></a>) – A basic HRM_Processor object made from input_file.csv</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="test_HRM_Processor.test_index_beat_start_times">
+<code class="descclassname">test_HRM_Processor.</code><code class="descname">test_index_beat_start_times</code><span class="sig-paren">(</span><em>hrm</em><span class="sig-paren">)</span><a class="headerlink" href="#test_HRM_Processor.test_index_beat_start_times" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests index_beat_start_times, which finds the start times of a beat
+in a numpy array based on indices specified by the qrs_peak_locations
+array.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>hrm</strong> (<a class="reference internal" href="HRM_Processor.html#HRM_Processor.HRM_Processor" title="HRM_Processor.HRM_Processor"><em>HRM_Processor</em></a>) – A basic HRM_Processor created from test_file.csv</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="test_HRM_Processor.test_voltage_extremes">
+<code class="descclassname">test_HRM_Processor.</code><code class="descname">test_voltage_extremes</code><span class="sig-paren">(</span><em>hrm</em><span class="sig-paren">)</span><a class="headerlink" href="#test_HRM_Processor.test_voltage_extremes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests the determine_voltage_extremes function to ensure that it
+returns the max and minimum of a voltage numpy array as a tuple in the
+form (max, min)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>hrm</strong> (<em>A basic HRM_Processor object</em>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="test_HRM_Processor.test_write_outputs_to_dict_voltage_extremes">
+<code class="descclassname">test_HRM_Processor.</code><code class="descname">test_write_outputs_to_dict_voltage_extremes</code><span class="sig-paren">(</span><em>hrm</em><span class="sig-paren">)</span><a class="headerlink" href="#test_HRM_Processor.test_write_outputs_to_dict_voltage_extremes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests that the voltage extremes was written to the output_dict of the
+HRM_Processor object from the voltage data. The comparision is to the
+‘voltage’ extremes of test_file.csv</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>hrm</strong> (<em>Basic HRM_Processor object made from test_file.csv</em>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="test_HRM_Processor.test_write_strip_duration">
+<code class="descclassname">test_HRM_Processor.</code><code class="descname">test_write_strip_duration</code><span class="sig-paren">(</span><em>hrm</em><span class="sig-paren">)</span><a class="headerlink" href="#test_HRM_Processor.test_write_strip_duration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests that the max value of the time numpy array was written to the
+“duration” entry of the output_dict upon construction of hrm. The max
+time value in test_file.csv is 2.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>hrm</strong> (<a class="reference internal" href="HRM_Processor.html#HRM_Processor.HRM_Processor" title="HRM_Processor.HRM_Processor"><em>HRM_Processor</em></a>) – Basic HRM_Processor object created from test_file.csv</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">bme590 Heart Rate Monitor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Katelyn Offerdahl.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/test_HRM_Processor.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
