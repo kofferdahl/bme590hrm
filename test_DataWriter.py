@@ -4,29 +4,27 @@ import os
 from DataReader import DataReader
 from HRM_Processor import HRM_Processor
 from DataWriter import DataWriter
+import pytest
 
 
-def test_DataWriter_init_valid_case(hrm):
+def test_DataWriter_init_valid_case():
     """Tests the initialization of the DataWriter object, and that it
     successfully gets the output_dict from the input_dict and stores it as
     metrics.
-
-    Parameters
-    ----------
-    hrm:    HRM_Processor
-            Generic HRM_Processor made from a DataReader with test_file.csv
 
     Returns
     -------
     None
 
     """
-    hrm.isValid = True  # Force validity for testing case
+
+    dr = DataReader("test_data1.csv")
+    hrm = HRM_Processor(dr)
     dw = DataWriter(hrm)
     assert dw.metrics == hrm.output_dict
 
 
-def test_DataWriter_init_invalid_case(hrm, capsys):
+def test_DataWriter_init_invalid_case(hrm):
     """Tests the initialization of the DataWriter object for a case where
     the data from the HRM_Processor object is not valid.
 
@@ -42,12 +40,8 @@ def test_DataWriter_init_invalid_case(hrm, capsys):
 
     """
     hrm.isValid = False  # Force invalidity for testing case
-    dw = DataWriter(hrm)
-    captured_output, err = capsys.readouterr()
-
-    assert captured_output == "Error: Data is too noisy for heart rate " \
-                              "calculation. These data will not be written " \
-                              "to a JSON file.\n"
+    with pytest.raises(ValueError):
+        dw = DataWriter(hrm)
 
 
 def test_DataWriter_init_write_to_dict():
@@ -67,22 +61,19 @@ def test_DataWriter_init_write_to_dict():
     os.remove("test_data1.json")
 
 
-def test_write_to_json(hrm):
+def test_write_to_json():
     """Tests the write_to_json function of the DataWriter, which should be
     able to take in an dictionary and output file path, and write that
     dictionary to the specified output file.
-
-    Parameters
-    ----------
-    hrm:    HRM_Processor
-            A generic HRM_Processor made from a DataReader with test_file.csv
 
     Returns
     -------
     None
     """
-
+    dr = DataReader("test_data1.csv")
+    hrm = HRM_Processor(dr)
     dw = DataWriter(hrm)
+
     metrics = {"test": 5,
                "another word": 18.5}
     output_file = "test.json"

@@ -53,15 +53,23 @@ class DataReader:
                         self.output_dict["duration"] = self.duration
                     except ValueError:
                         print(
-                            "The duration specified is not valid. Please try "
-                            "again.")
+                            "The duration specified is not valid. Using full"
+                            "duration of ECG strip instead")
+
                         logging.error("The duration specified is not valid. "
-                                      "Please try again.")
+                                      "Using full duration of ECG strip "
+                                      "instead.")
+                        self.duration = (
+                            np.amin(self.output_dict["time"]),
+                            np.amax(self.output_dict["time"]))
+                        self.output_dict["duration"] = self.duration
+
             except TypeError:
                 print("The csv file has blank or non-numerical values. "
                       "Please remove these and try again.")
                 logging.error("The csv file has blank or non-numerical "
                               "values. Please remove these and try again.")
+                raise TypeError
 
             except ValueError:
                 print("the length of the time vector is not equal to the "
@@ -70,16 +78,19 @@ class DataReader:
                 logging.error("the length of the time vector is not equal to "
                               "the length of the voltage vector. Please fix "
                               "this problem in the CSV file and try again.")
+                raise ValueError
 
         except FileNotFoundError:
             print("The input file cannot be found. Please try again.")
             logging.error("The input file cannot be found. Please try again")
+            raise FileNotFoundError
 
         except ValueError:
             print("The input file does not have a .csv file extension. "
                   "Please try again with a CSV file.")
             logging.error("the input file does not have a .csv file "
                           "extension. Please try again with a CSV file.")
+            raise ValueError
 
     def read_csv_file(self):
         """read_csv_file reads in the CSV file from the csv_file_path
