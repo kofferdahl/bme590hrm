@@ -275,3 +275,120 @@ def test_determine_bpm2(hrm):
     calculated_bpm = hrm.determine_bpm(start_times, duration)
 
     assert expected_bpm == calculated_bpm
+
+
+@pytest.mark.parametrize("voltage_extremes", [
+    (0, 500),
+    (-500, 0),
+    (-301, 5),
+    (1000, 10000),
+])
+def test_check_voltage_extremes_warnings(hrm, capsys, voltage_extremes):
+    """Tests that the check_voltage_extremes function prints a warning when
+    the absolute value of a voltage extreme is greater than 300.
+
+    Parameters
+    ----------
+    hrm:    HRM_Processor
+            A generic HRM_Processor made from a DataReader with test_file.csv
+    capsys: Pytest fixture
+            A pytest fixture for getting outputs printed to the console
+    voltage_extremes:   tuple(float, float)
+                        Voltage extremes in the format (min, max)
+
+    Returns
+    -------
+    None
+    """
+    hrm.check_voltage_extremes(voltage_extremes)
+    captured_output, err = capsys.readouterr()
+
+    assert captured_output == "Warning: voltage values exceed expected " \
+                              "levels for a typical ECG signal. This " \
+                              "data may not be valid.\n"
+
+
+@pytest.mark.parametrize("voltage_extremes", [
+    (0, 300),
+    (-300, 0),
+    (-150, 5),
+    (10, 100),
+])
+def test_check_voltage_extremes_no_warnings(hrm, capsys, voltage_extremes):
+    """Tests that the check_voltage_extremes function does prints a warning
+    when the absolute value of both voltage extremes is less than or equal to
+    300.
+
+    Parameters
+    ----------
+    hrm:    HRM_Processor
+            A generic HRM_Processor made from a DataReader with test_file.csv
+    capsys: Pytest fixture
+            A pytest fixture for getting outputs printed to the console
+    voltage_extremes:   tuple(float, float)
+                        Voltage extremes in the format (min, max)
+
+    Returns
+    -------
+    None
+    """
+    hrm.check_voltage_extremes(voltage_extremes)
+    captured_output, err = capsys.readouterr()
+
+    assert captured_output == ''
+
+
+@pytest.mark.parametrize("num_beats, duration, is_realistic", [
+    (50, 60.0, True),
+    (60, 60.0, True),
+    (151, 60.0, False),
+    (35, 60.0, False),
+])
+def test_is_realistic_num_beats(hrm, num_beats, duration, is_realistic):
+    """Tests that the is_realistic_num_beats correctly determines is the
+    number of beats is physiologically realistic for a given strip duration.
+
+    THe duration of the strip is measured in seconds. An unrealistic number
+    of beats is defined as less than 36 BPM or greater than 150 BPM.
+
+    Parameters
+    ----------
+    hrm:        HRM_Processor
+                A generic HRM_Processor made from a DataReader with
+                test_file.csv
+    num_beats:  int
+                The number of beats in a ECG sequence
+    duration:   float
+                The duration of the ECG sequence in seconds
+    is_realistic:   boolean
+                    True if the number of beats is physiologically realistic.
+
+    Returns
+    -------
+    None
+    """
+    measured_is_realistic = hrm.is_unrealistic_num_beats(num_beats, duration)
+
+    assert measured_is_realistic == is_realistic
+
+
+def test_validate_outputs_invalid_case(hrm):
+    """Checks that the validate_outputs function raises a ValueError when
+    the number of beats is not physiologically realistic for a ECG strip
+    duration.
+
+    Parameters
+    ----------
+    hrm:    HRM_Processor
+            A generic HRM_Processor object made from a DataReader with
+            test_file.csv
+
+    Returns
+    -------
+    None
+    """
+    output_dict = {"num_beats": 10000, "duration": 60, "voltage_extremes": (
+        0, 200)}
+
+    with pytest.raises(ValueError):
+        hrm.validate_outputs(output_dict)

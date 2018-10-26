@@ -1,4 +1,5 @@
 import numpy as np
+import logging
 
 
 class HRM_Processor:
@@ -15,6 +16,10 @@ class HRM_Processor:
     output_dict: dict
                 A dictionary containing the heart rate metrics that will be
                 written to the JSON file by the DataWriter.
+    isValid:    boolean
+                True if the number of beats is realistic for the ECG
+                strip duration. Used by the DataWriter to determine if
+                the data should be written to the JSON file.
 
     """
     def __init__(self, DataReader):
@@ -27,10 +32,26 @@ class HRM_Processor:
                     file and created and output_dict with the relevant data
                     for the HRM_Processor
         """
+
+        logging.basicConfig(filename="HRM_Processor_logs.txt",
+                            format='%(asctime)s %(levelname)s:%(message)s',
+                            datefmt='%m/%d/%Y %I:%M:%S %p')
+
         self.csv_file = DataReader.csv_file_path
         self.input_data = DataReader.output_dict
         self.output_dict = {}
         self.write_outputs_to_dict()
+        try:
+            self.validate_outputs(self.output_dict)
+        except ValueError:
+            print("The heart rate monitor has calculated a heart rate that "
+                  "is not physiologically realistic. This is likely due to "
+                  "a high level of signal noise. These misleading / "
+                  "inaccurate outputs will not be written to a JSON file.")
+            logging.error("Invalid BPM calculated from ECG strip. isValid "
+                          "flag set to false preventing this misleading data "
+                          "from being written to a JSON file.")
+            self.isValid = False
 
     def write_outputs_to_dict(self):
         """Writes all of the HRM_Processor's outputs to it's output
@@ -62,6 +83,31 @@ class HRM_Processor:
             self.output_dict["mean_hr_bpm"] = mean_hr_bpm
         except ValueError:
             print("Invalid duration (no beats in that duration)")
+            logging.error("ValueError: Invalid number of beats in specified "
+                          "duration for BPM calculations.")
+
+    def validate_outputs(self, output_dict):
+        """Validates the outputs in the output_dict to determine if the
+        program is generating reasonable metrics for this signal.
+
+        Parameters
+        ----------
+        output_dict:    dict
+                        Output dictionary containing the metrics for the
+                        heart rate monitor.
+
+        Returns
+        -------
+        None
+
+        """
+        self.check_voltage_extremes(output_dict["voltage_extremes"])
+        is_realistic = self.is_unrealistic_num_beats(output_dict["num_beats"],
+                                                     output_dict["duration"])
+
+        if not is_realistic:
+            raise ValueError
+        self.isValid = True
 
     def determine_voltage_extremes(self, voltage):
         """Determines the min and max values of the voltage data
@@ -84,6 +130,27 @@ class HRM_Processor:
         voltage_extremes = (voltage_min, voltage_max)
 
         return voltage_extremes
+
+    def check_voltage_extremes(self, voltage_extremes):
+        """Prints a warning message if the voltage_extremes exceed 300 mV,
+        which is outside the range of a normal ECG signal.
+
+        Parameters
+        ----------
+        voltage_extremes:   tuple(float, float)
+                            A tuple containing the maximum and minimum
+                            voltage values in the format (min, max)
+
+        Returns
+        -------
+        None
+
+        """
+        if abs(voltage_extremes[0]) > 300 or abs(voltage_extremes[1] > 300):
+            print("Warning: voltage values exceed expected levels for a "
+                  "typical ECG signal. This data may not be valid.")
+            logging.warning("The voltage values exceed expected values for a"
+                            "typical ECG signal. This data may not be valid.")
 
     def determine_ecg_strip_duration(self, time):
         """Determines the length of the ECG strip
@@ -287,6 +354,37 @@ class HRM_Processor:
         """
         num_beats = np.size(beat_start_times)
         return num_beats
+
+    def is_unrealistic_num_beats(self, num_beats, duration):
+        """Checks that the calculated number of beats is physiologically
+        realistic for the duration of the ECG strip.
+
+        Physiologically realistic for the sake of this function is defined
+        as a heart rate that is greater than 150 BPM or one that is less tha 40
+        BPM. While it may be possible in some extreme cases for heart rates
+        to exceed these extremes, it is considered more likely that the beat
+        detection algorithm is falsely detecting beats or missing beats.
+
+        Parameters
+        ----------
+        num_beats:  int
+                    The number of beats in the ECG strip
+        duration:   float
+                    The duration of the ECG strip
+
+        Returns
+        -------
+        realistic_num_beats:    boolean
+                                Specifies whether the number of beats is
+                                physiologically realistic.
+        """
+        realistic_max_beats = 2.5*duration  # corresponds to 150 BPM
+        realistic_min_beats = 0.6*duration  # corresponds to 36 BPM
+
+        if num_beats > realistic_max_beats or num_beats < realistic_min_beats:
+            return False
+        else:
+            return True
 
     def determine_bpm(self, beat_start_times, duration):
         """Determines the mean beats per minute (BPM) within a specified
