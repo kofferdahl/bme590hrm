@@ -16,10 +16,10 @@ class HRM_Processor:
     output_dict: dict
                 A dictionary containing the heart rate metrics that will be
                 written to the JSON file by the DataWriter.
-    is_realistic:   boolean
-                    True if the number of beats is realistic for the ECG
-                    strip duration. Used by the DataWriter to determine if
-                    the data should be written to the JSON file.
+    isValid:    boolean
+                True if the number of beats is realistic for the ECG
+                strip duration. Used by the DataWriter to determine if
+                the data should be written to the JSON file.
 
     """
     def __init__(self, DataReader):
