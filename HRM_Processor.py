@@ -403,17 +403,24 @@ class HRM_Processor:
                      The mean heart rate in BPM within the specified
                      duration.
         """
-        start_inx = np.argmax(beat_start_times >= duration[0])
-        end_inx = np.argmax(beat_start_times >= duration[1])
+        if beat_start_times.size == 0:
+            print("Warning: no beats detected")
+            logging.warning("No beats detected for BPM calculation")
+            mean_hr_bpm = 0
+        else:
+            start_inx = np.argmax(beat_start_times >= duration[0])
+            end_inx = np.argmax(beat_start_times >= duration[1])
 
-        if beat_start_times[-1] < duration[1]:
-            end_inx = beat_start_times.size - 1
+            if beat_start_times[-1] < duration[1]:
+                end_inx = beat_start_times.size - 1
 
-        num_beats_in_duration = end_inx - start_inx
-        time_in_seconds = duration[1] - duration[0]
-        if time_in_seconds == 0:
-            raise ValueError
-        time_in_minutes = time_in_seconds / 60
+            num_beats_in_duration = end_inx - start_inx
+            time_in_seconds = duration[1] - duration[0]
 
-        mean_hr_bpm = num_beats_in_duration / time_in_minutes
+            if time_in_seconds == 0:
+                raise ValueError
+
+            time_in_minutes = time_in_seconds / 60
+
+            mean_hr_bpm = num_beats_in_duration / time_in_minutes
         return mean_hr_bpm

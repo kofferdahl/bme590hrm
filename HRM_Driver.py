@@ -36,16 +36,17 @@ def main():
     file_name = get_file_name()
 
     wants_duration = get_wants_duration()
-    print(wants_duration)
-    if wants_duration:
-        print("wants duration!")
-        duration = get_duration()
-        dr = DataReader(file_name, duration)
-    else:
-        dr = DataReader(file_name)
+    try:
+        if wants_duration:
+            duration = get_duration()
+            dr = DataReader(file_name, duration)
+        else:
+            dr = DataReader(file_name)
 
-    hrm = HRM_Processor(dr)
-    dw = DataWriter(hrm)
+        hrm = HRM_Processor(dr)
+        dw = DataWriter(hrm)
+    except(FileNotFoundError, ValueError, TypeError):
+        logging.info("Driver script terminated unsuccessfully.")
 
     logging.info("Successful termination of HRM_Driver")
 

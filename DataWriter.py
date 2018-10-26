@@ -43,6 +43,7 @@ class DataWriter:
             logging.error("Data from " + hrm.csv_file + " is too noisy. JSON "
                                                         "file will not be "
                                                         "written.")
+            raise ValueError
 
     def get_output_file_name(self, csv_file):
         """Finds the root file name (i.e. the file name without the .csv
