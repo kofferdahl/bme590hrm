@@ -99,7 +99,7 @@ class DataReader:
             can_interp = self.can_interp(time)
             if can_interp:
                 print("warning: interpolating missing time values.")
-                self.logger.warning("Interpolating missing time values.")
+                logging.warning("Interpolating missing time values.")
                 time = self.interp_time(time)
 
         self.validate_csv_data(time, voltage)
