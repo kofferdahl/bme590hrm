@@ -14,7 +14,7 @@ def test_DataWriter_init(hrm):
     Parameters
     ----------
     hrm:    HRM_Processor
-            Generic HRM_Procesor made from test_file.csv
+            Generic HRM_Processor made from a DataReader with test_file.csv
 
     Returns
     -------
@@ -50,7 +50,7 @@ def test_write_to_json(hrm):
     Parameters
     ----------
     hrm:    HRM_Processor
-            A generic HRM_Processor made from test_file.csv
+            A generic HRM_Processor made from a DataReader with test_file.csv
 
     Returns
     -------
