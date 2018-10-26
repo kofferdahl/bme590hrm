@@ -2,6 +2,21 @@ import numpy as np
 
 
 class HRM_Processor:
+    """The HRM_Processer takes in time, voltage, and BPM duration from the
+    DataReader and calculates the outputs for the heart rate monitor.
+
+    Attributes
+    ----------
+    csv_file:   str
+                A strain containing the path for the CSV file.
+    input_data: dict
+                A dictionary containing the data read in from the DataReader
+                passed into the initialization function
+    output_dict: dict
+                A dictionary containing the heart rate metrics that will be
+                written to the JSON file by the DataWriter.
+
+    """
     def __init__(self, DataReader):
         """Constructor for HRM_Processor
 
@@ -12,7 +27,7 @@ class HRM_Processor:
                     file and created and output_dict with the relevant data
                     for the HRM_Processor
         """
-
+        self.csv_file = DataReader.csv_file_path
         self.input_data = DataReader.output_dict
         self.output_dict = {}
         self.write_outputs_to_dict()
@@ -54,7 +69,7 @@ class HRM_Processor:
         Parameters
         ----------
         voltage:    numpy array
-                    Contains the voltage ad
+                    Contains the voltage data from the CSV file
 
         Returns
         -------
@@ -71,7 +86,7 @@ class HRM_Processor:
         return voltage_extremes
 
     def determine_ecg_strip_duration(self, time):
-        """
+        """Determines the length of the ECG strip
 
         Parameters
         ----------
@@ -87,7 +102,16 @@ class HRM_Processor:
         return strip_duration
 
     def determine_beat_start_times(self, time, voltage):
-        """
+        """Create a numpy array with the starting time for each beat.
+
+        The starting time of a beat is defined as the peak of the QRS
+        complex. This function essentially synthesizes the outputs of helper
+        functions to implement a thresholding beat detection algorithm. This
+        algorithm essentially identifies continuous regions where the voltage
+        trace is continuously above the threshold (which should correspond to
+        the QRS complex of a beat), finds maximum of the voltage trace within
+        each continuous region, and then indexes the corresponding time value
+        in the time array to determine the start time of each beat.
 
         Parameters
         ----------
@@ -111,7 +135,10 @@ class HRM_Processor:
         return start_times
 
     def determine_threshold(self, voltage):
-        """Determines the threshold
+        """Determines the threshold voltage for defining the start and end
+        of the QRS complex.
+
+        The threshold voltage is 75% of the peak voltage value.
 
         Parameters
         ----------
@@ -150,12 +177,19 @@ class HRM_Processor:
         return indices
 
     def find_beat_separation_points(self, indices_array):
-        """Find the separation points between beats, i.e. the points where
-        the difference between neighboring elements in the indices_array > 2
-        (which indicates areas where there was 'jump' in indices above the
-        threshold). Then, it indexes those indices in the indices_array,
-        to determine the indices in the original voltage arrays where the
-        'end' of a beat occurs.
+        """Finds the indices where the QRS complex of each beat goes below
+        the threshold.
+
+        Separation points are points where the difference between
+        neighboring elements in the indices array (=the indices where the
+        voltage is above threshold) is greater than 2. This indicates that
+        there is a 'jump' in indices above the threshold, implying that a
+        significant amount of time passed. My code interprets this
+        significant amount of time passing as a separation between beats.
+        This function indexes the indices_array at the locations where there is
+        a jump/separation, which results in the indices in the original
+        voltage array where the QRS complex goes below the threshold for
+        each beat.
 
         Parameters
         ----------
@@ -179,8 +213,8 @@ class HRM_Processor:
         return beat_sep_inx
 
     def find_qrs_peak_indices(self, voltage, beat_sep_inx):
-        """Indexes the voltage array during the QRS complex of each beat (
-        determined by the indices specified in beat_sep_inx), finds the max
+        """Indexes the voltage array during the QRS complex of each beat
+        (determined by the indices specified in beat_sep_inx), finds the max
         value in each range, and finds the index of the peak of the QRS
         complex.
 
@@ -194,7 +228,7 @@ class HRM_Processor:
 
         Returns
         -------
-        qrs_peak_locations  numpy array
+        qrs_peak_locations:  numpy array
                             The locations of the peak of the QRS complex for
                             each beat
         """
@@ -228,7 +262,7 @@ class HRM_Processor:
 
         Returns
         -------
-        beat_start_times    numpy array
+        beat_start_times:    numpy array
                             Contains the times where each beat starts (defined
                             as the time of the peak of the QRS complex)
         """
@@ -248,13 +282,31 @@ class HRM_Processor:
 
         Returns
         -------
-        num_beats           int
+        num_beats:          int
                             The number of beats
         """
         num_beats = np.size(beat_start_times)
         return num_beats
 
     def determine_bpm(self, beat_start_times, duration):
+        """Determines the mean beats per minute (BPM) within a specified
+        duration of time.
+
+        Parameters
+        ----------
+        beat_start_times:   Numpy array
+                            Specifies the starting time of each beat in the
+                            ECG strip.
+        duration:           tuple(float, float)
+                            A tuple specifying the start and end of the
+                            duration over which the BPM will be calculated.
+
+        Returns
+        -------
+        mean_hr_bpm: float
+                     The mean heart rate in BPM within the specified
+                     duration.
+        """
         start_inx = np.argmax(beat_start_times >= duration[0])
         end_inx = np.argmax(beat_start_times >= duration[1])
 
