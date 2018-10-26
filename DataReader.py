@@ -28,7 +28,7 @@ class DataReader:
     """
     def __init__(self, csv_file_path, duration=None):
 
-        logging.basicConfig(filename="DataReader_logs.txt",
+        logging.basicConfig(filename="HRM_logs.txt",
                             format='%(asctime)s %(levelname)s:%(message)s',
                             datefmt='%m/%d/%Y %I:%M:%S %p')
 
