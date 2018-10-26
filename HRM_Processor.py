@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 
 class HRM_Processor:
@@ -31,6 +32,7 @@ class HRM_Processor:
         self.input_data = DataReader.output_dict
         self.output_dict = {}
         self.write_outputs_to_dict()
+        self.validate_outputs(self.output_dict)
 
     def write_outputs_to_dict(self):
         """Writes all of the HRM_Processor's outputs to it's output
@@ -63,6 +65,23 @@ class HRM_Processor:
         except ValueError:
             print("Invalid duration (no beats in that duration)")
 
+    def validate_outputs(self, output_dict):
+        """Validates the outputs in the output_dict to determine if the
+        program is generating reasonable metrics for this signal.
+
+        Parameters
+        ----------
+        output_dict:    dict
+                        Output dictionary containing the metrics for the
+                        heart rate monitor.
+
+        Returns
+        -------
+        None
+
+        """
+        self.check_voltage_extremes(output_dict["voltage_extremes"])
+
     def determine_voltage_extremes(self, voltage):
         """Determines the min and max values of the voltage data
 
@@ -84,6 +103,25 @@ class HRM_Processor:
         voltage_extremes = (voltage_min, voltage_max)
 
         return voltage_extremes
+
+    def check_voltage_extremes(self, voltage_extremes):
+        """Prints a warning message if the voltage_extremes exceed 300 mV,
+        which is outside the range of a normal ECG signal.
+
+        Parameters
+        ----------
+        voltage_extremes:   tuple(float, float)
+                            A tuple containing the maximum and minimum
+                            voltage values in the format (min, max)
+
+        Returns
+        -------
+        None
+
+        """
+        if abs(voltage_extremes[0]) > 300 or abs(voltage_extremes[1] > 300):
+            print("Warning: voltage values exceed expected levels for a "
+                  "typical ECG signal. This data may not be valid.")
 
     def determine_ecg_strip_duration(self, time):
         """Determines the length of the ECG strip

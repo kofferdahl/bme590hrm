@@ -275,3 +275,64 @@ def test_determine_bpm2(hrm):
     calculated_bpm = hrm.determine_bpm(start_times, duration)
 
     assert expected_bpm == calculated_bpm
+
+
+@pytest.mark.parametrize("voltage_extremes", [
+    (0, 500),
+    (-500, 0),
+    (-301, 5),
+    (1000, 10000),
+])
+def test_check_voltage_extremes_warnings(hrm, capsys, voltage_extremes):
+    """Tests that the check_voltage_extremes function prints a warning when
+    the absolute value of a voltage extreme is greater than 300.
+
+    Parameters
+    ----------
+    hrm:    HRM_Processor
+            A generic HRM_Processor made from a DataReader with test_file.csv
+    capsys: Pytest fixture
+            A pytest fixture for getting outputs printed to the console
+    voltage_extremes:   tuple(float, float)
+                        Voltage extremes in the format (min, max)
+
+    Returns
+    -------
+    None
+    """
+    hrm.check_voltage_extremes(voltage_extremes)
+    captured_output, err = capsys.readouterr()
+
+    assert captured_output == "Warning: voltage values exceed expected " \
+                              "levels for a typical ECG signal. This " \
+                              "data may not be valid.\n"
+
+
+@pytest.mark.parametrize("voltage_extremes", [
+    (0, 300),
+    (-300, 0),
+    (-150, 5),
+    (10, 100),
+])
+def test_check_voltage_extremes_no_warnings(hrm, capsys, voltage_extremes):
+    """Tests that the check_voltage_extremes function does prints a warning
+    when the absolute value of both voltage extremes is less than or equal to
+    300.
+
+    Parameters
+    ----------
+    hrm:    HRM_Processor
+            A generic HRM_Processor made from a DataReader with test_file.csv
+    capsys: Pytest fixture
+            A pytest fixture for getting outputs printed to the console
+    voltage_extremes:   tuple(float, float)
+                        Voltage extremes in the format (min, max)
+
+    Returns
+    -------
+    None
+    """
+    hrm.check_voltage_extremes(voltage_extremes)
+    captured_output, err = capsys.readouterr()
+
+    assert captured_output == ''
